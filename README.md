@@ -36,4 +36,3 @@ Takes two numbers and returns the sum.
 - Daniel Felipe Acuña
 - Julian Estaban Cespedez
 - Sharon Dayan Díaz
->>>>>>> master
