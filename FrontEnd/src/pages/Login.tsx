@@ -1,17 +1,56 @@
 import { useState } from "react";
 import MainLayout from "../layout/main-layout";
+import { useAuth } from "../auth/AuthProvider";
+import { Navigate, useNavigate } from "react-router-dom";
+import { API_URL } from "../auth/consts";
+import type { AuthResponseError } from "../interfaces/types";
+import Alert from "../shared/Alert";
 
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [errorResponse, setErrorResponse] = useState("");
+  const auth = useAuth();
+  const goTo = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch(`${API_URL}/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          password,
+        })
+      })
+      if (!response.ok) {
+        console.log("something went wrong");
+        const json = (await response.json()) as AuthResponseError;
+        setErrorResponse(json.body.error);
+        return
+      }
+      console.log("Login successful");
+      setErrorResponse("");
+      goTo("/");
+    } catch (error) {
+      console.error("Network error:", error);
+      setErrorResponse("Error de red. Intenta nuevamente más tarde.");
+    }
+  };
+  if (auth.isAuth) return <Navigate to="/Home" />;
+
   return (
     <MainLayout>
       <div className="min-h-screen flex fle-col items-center justify-center">
         <div className="py-6 px-4">
           <div className="grid lg:grid-cols-2 items-center gap-6 max-w-6xl w-full">
             <div className="border border-slate-300 rounded-lg p-6 max-w-md shadow-[0_2px_22px_-4px_rgba(93,96,127,0.2)] max-lg:mx-auto">
-              <form className="space-y-6">
-                <div className="mb-12">
+              <form className="space-y-6" onSubmit={handleSubmit}>
+                <div className="mb-9">
                   <h1 className="text-slate-900 text-3xl font-semibold">
                     Inicia Sesión
                   </h1>
@@ -20,7 +59,6 @@ export default function Login() {
                     funcionalidades del sistema.
                   </p>
                 </div>
-
                 <div>
                   <label className="text-slate-900 text-sm font-medium mb-2 block">
                     Nombre de Usuario
@@ -30,7 +68,6 @@ export default function Login() {
                       name="username"
                       type="text"
                       value={username}
-                      required
                       className="w-full text-sm text-slate-900 border border-slate-300 pl-4 pr-10 py-3 rounded-lg outline-blue-600"
                       placeholder="..."
                       onChange={(e) => setUsername(e.target.value)}
@@ -64,7 +101,6 @@ export default function Login() {
                       name="password"
                       type="password"
                       value={password}
-                      required
                       className="w-full text-sm text-slate-900 border border-slate-300 pl-4 pr-10 py-3 rounded-lg outline-blue-600"
                       placeholder="***"
                       onChange={(e) => setPassword(e.target.value)}
@@ -107,18 +143,20 @@ export default function Login() {
                     </a>
                   </div>
                 </div>
-
                 <div className="!mt-12">
-                  <button
-                    type="button"
-                    className="w-full shadow-xl py-2.5 px-4 text-[15px] font-medium tracking-wide rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none cursor-pointer"
-                  >
+                  <button className="w-full shadow-xl py-2.5 px-4 text-[15px] font-medium tracking-wide rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none cursor-pointer">
                     Ingresar
                   </button>
                 </div>
+                {!!errorResponse && (
+                  <Alert
+                    title={"Error!"}
+                    message={errorResponse}
+                    type={"error"}
+                  />
+                )}
               </form>
             </div>
-
             <div className="max-lg:mt-8">
               <img
                 src="https://readymadeui.com/login-image.webp"
