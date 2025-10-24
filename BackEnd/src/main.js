@@ -2,8 +2,9 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { errorHandler } from './../middleware/ErrorHandler.js';
+import {authenticate} from '../middleware/authenticate.js';
 
-import userRouter from './routes/user.js';
+import userRouter from './routes/userInfoToken.js';
 import loginRouter from './routes/login.js';
 import signoutRouter from './routes/signout.js';
 import refreshTokenRouter from './routes/refreshToken.js';
@@ -21,17 +22,18 @@ app.use(cors({
 ));
 app.use(express.json());
 
-app.use('/api/user', userRouter);
 app.use('/api/login', loginRouter);
-app.use('/api/signout',signoutRouter);
 app.use('/api/refresh-token', refreshTokenRouter);
+app.use('/api/userInfoToken', authenticate, userRouter);
+app.use('/api/signout',signoutRouter);
 
 app.use(errorHandler);
+// app.use(authenticate)
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
 })
 
-app.listen(port, () => { 
+app.listen(port, () => {
     console.log(`Backend SurtiPollo UP in port:${port}`)
 })

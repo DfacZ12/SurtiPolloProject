@@ -19,7 +19,6 @@ CREATE TABLE EPS (
 );
 
 INSERT INTO EPS (EPS_Nombre) VALUES ('sanitas');
-
 -- ==============================
 -- CREAR TABLA USUARIO
 -- ==============================
@@ -178,7 +177,7 @@ CREATE TABLE DETALLE_FACT_PROV (
 -- ==============================
 
 Insert into USUARIO(Cedula, Nombre, Apellido, Direccion, EPS, Celular,  Correo, Registrado_Por, username, password, Cargo, Estado)
-Values ('1001219271', 'Daniel','Acuña', 'Calle 6 Sur#24-24', 1, 3214629118, 'daniel198@surtipollo.com', '1001219271', 'danielfacunam', '12345678', 1,1);
+Values ('1001219271', 'Daniel','Acuña', 'Calle 6 Sur#24-24', 1, 3214629118, 'daniel198@surtipollo.com', '1001219271', 'danielfacunam', '$2a$12$2OzvAUkPJ6HsrjF/rt3WU.o8jeeLUP36aWocTrcLikcfcvUhlabR2', 1,1);-- pass = zadoFal0*22
 
 INSERT INTO CLIENTE
 (Cedula, Nombre, Apellido, Tel_fijo, Celular, Direccion_Cliente, Correo, Registrado_por,Estado)
@@ -204,3 +203,8 @@ SELECT * FROM USUARIO;
 SELECT * FROM CARGO;
 SELECT * FROM PRODUCTO;
 SELECT * FROM EPS;
+
+
+
+SELECT a.Cedula,a.username,b.NombreCargo as Cargo FROM USUARIO a inner join CARGO b on a.cargo=b.id WHERE username='danielfacunam'
+
