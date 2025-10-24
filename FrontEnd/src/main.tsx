@@ -6,6 +6,7 @@ import Login from "./pages/Login.tsx";
 import HomePage from "./pages/Home.tsx";
 import ProtectedRoute from "./pages/ProtectedRoute.tsx";
 import { AuthProvider } from "./auth/AuthProvider.tsx";
+import Footer from "./layout/Footer.tsx";
 
 const router = createBrowserRouter([
   {
@@ -26,8 +27,12 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
+    <header></header>
     <AuthProvider>
       <RouterProvider router={router} />
     </AuthProvider>
+    <footer className="fixed bottom-0 left-0 w-full bg-gray-100 p-4">
+      {<Footer />}
+    </footer>
   </StrictMode>
 );

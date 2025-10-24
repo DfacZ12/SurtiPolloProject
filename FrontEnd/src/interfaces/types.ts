@@ -1,6 +1,6 @@
 export interface AuthResponse{
   body:{
-    user:string;
+    infoUser:User;
     accessToken:string;
     refreshToken:string;
   }
@@ -10,6 +10,12 @@ export interface AuthResponseError{
   body:{
     error: string;
   }
+}
+
+export interface User{
+  cedula: number;
+  username: string;
+  cargo: string;
 }
 
 export interface AccesTokenResponse{
