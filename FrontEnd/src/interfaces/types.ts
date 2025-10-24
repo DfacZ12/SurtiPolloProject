@@ -12,3 +12,10 @@ export interface AuthResponseError{
   }
 }
 
+export interface AccesTokenResponse{
+  statusCode: number;
+  body:{
+    accessToken: string;
+  },
+  error?: string;
+}

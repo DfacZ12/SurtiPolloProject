@@ -3,10 +3,11 @@ import MainLayout from "../layout/main-layout";
 import { useAuth } from "../auth/AuthProvider";
 import { Navigate, useNavigate } from "react-router-dom";
 import { API_URL } from "../auth/consts";
-import type { AuthResponseError } from "../interfaces/types";
+import type { AuthResponse, AuthResponseError } from "../interfaces/types";
 import Alert from "../shared/Alert";
+import axios from "axios";
 
-export default function Login() {
+const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorResponse, setErrorResponse] = useState("");
@@ -15,34 +16,30 @@ export default function Login() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     try {
-      const response = await fetch(`${API_URL}/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username,
-          password,
-        })
-      })
-      if (!response.ok) {
-        console.log("something went wrong");
-        const json = (await response.json()) as AuthResponseError;
-        setErrorResponse(json.body.error);
-        return
+      const response = await axios.post(`${API_URL}/login`, {
+        username,
+        password,
+      });
+      if (response.status === 201) {
+        console.log("Login successful");
+        setErrorResponse("");
+        const json = response.data as AuthResponse;
+        if(json.body.accessToken && json.body.refreshToken){
+          auth.saveUser(json);
+          goTo("/Home");
+        }
       }
-      console.log("Login successful");
-      setErrorResponse("");
-      goTo("/");
     } catch (error) {
-      console.error("Network error:", error);
-      setErrorResponse("Error de red. Intenta nuevamente más tarde.");
+     if (axios.isAxiosError(error)) {
+      console.log("Axios error:", error.response?.data.body.error || error.message);
+      const json = (await error.response?.data) as AuthResponseError;
+      setErrorResponse(json.body.error || error.message);
+     }
     }
-  };
-  if (auth.isAuth) return <Navigate to="/Home" />;
 
+    if (auth.isAuth) return <Navigate to="/Home" />;
+  };
   return (
     <MainLayout>
       <div className="min-h-screen flex fle-col items-center justify-center">
@@ -170,3 +167,5 @@ export default function Login() {
     </MainLayout>
   );
 }
+
+export default Login;
