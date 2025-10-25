@@ -17,12 +17,15 @@ const AuthContext = createContext({
   saveUser: (userData: AuthResponse) => {},
   getRefreshToken: () => {},
   getUser: () => ({} as User | undefined),
+  isLoading: true,
 });
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isAuth, setIsAuth] = useState(false);
   const [accessToken, setAccessToken] = useState<string>("");
   const [user, setUser] = useState<User>();
+  const [isLoading, setIsLoading] = useState(true);
+
 
   useEffect(() => {
     checkAuth();
@@ -71,18 +74,21 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const checkAuth = async () => {
-    if (!accessToken) {
+    try{
       const token = getRefreshToken();
       if (token) {
         const newAccessToken = await requestNewAccessToken(token);
         if (newAccessToken) {
           const userInfo = await getUserInfo(newAccessToken);
           if (userInfo) {
-            console.log("User info retrieved on auth check:", userInfo);
             saveSessionInfo(userInfo, newAccessToken, token);
           }
         }
       }
+    }catch(error){
+      console.error("Error during authentication check:", error);
+    }finally{
+      setIsLoading(false);
     }
   };
 
@@ -119,16 +125,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     localStorage.setItem("tk", JSON.stringify(refreshToken));
     setUser(userInfo);
     setIsAuth(true);
-    console.log(userInfo);
-    console.log("a",accessToken);
-    console.log("r",refreshToken);
   };
 
-  const getUser = () => user;
+  const getUser = ():User | undefined => user;
 
   return (
     <AuthContext.Provider
-      value={{ isAuth, getAccessToken, saveUser, getRefreshToken, getUser }}
+      value={{ isAuth, getAccessToken, saveUser, getRefreshToken, getUser, isLoading }}
     >
       {children}
     </AuthContext.Provider>

@@ -25,14 +25,14 @@ const router = createBrowserRouter([
   },
 ]);
 
-createRoot(document.getElementById("root")!).render(
+createRoot(document.getElementById("root") as HTMLElement).render(
   <StrictMode>
-    <header></header>
     <AuthProvider>
+      <header></header>
       <RouterProvider router={router} />
+      <footer className="fixed bottom-0 left-0 w-full bg-gray-100 p-4">
+        {<Footer />}
+      </footer>
     </AuthProvider>
-    <footer className="fixed bottom-0 left-0 w-full bg-gray-100 p-4">
-      {<Footer />}
-    </footer>
   </StrictMode>
 );
