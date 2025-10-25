@@ -36,6 +36,7 @@ CREATE TABLE USUARIO (
   password VARCHAR(150) NOT NULL,
   Cargo TINYINT NOT NULL,
   Estado BIT NOT NULL,
+  refresh_token varchar(150),
   CONSTRAINT fk_usuario_eps FOREIGN KEY (EPS) REFERENCES EPS(COD_EPS),
   CONSTRAINT fk_usuario_registra FOREIGN KEY (Registrado_Por) REFERENCES USUARIO(Cedula),
   CONSTRAINT fk_usuario_cargo FOREIGN KEY (Cargo) REFERENCES CARGO(ID)
@@ -176,8 +177,8 @@ CREATE TABLE DETALLE_FACT_PROV (
 -- INSERCIONES DE EJEMPLO
 -- ==============================
 
-Insert into USUARIO(Cedula, Nombre, Apellido, Direccion, EPS, Celular,  Correo, Registrado_Por, username, password, Cargo, Estado)
-Values ('1001219271', 'Daniel','Acuña', 'Calle 6 Sur#24-24', 1, 3214629118, 'daniel198@surtipollo.com', '1001219271', 'danielfacunam', '$2a$12$2OzvAUkPJ6HsrjF/rt3WU.o8jeeLUP36aWocTrcLikcfcvUhlabR2', 1,1);-- pass = zadoFal0*22
+Insert into USUARIO(Cedula, Nombre, Apellido, Direccion, EPS, Celular,  Correo, Registrado_Por, username, password, Cargo, Estado,refresh_token)
+Values ('1001219271', 'Daniel','Acuña', 'Calle 6 Sur#24-24', 1, 3214629118, 'daniel198@surtipollo.com', '1001219271', 'danielfacunam', '$2a$12$2OzvAUkPJ6HsrjF/rt3WU.o8jeeLUP36aWocTrcLikcfcvUhlabR2', 1,1,'');-- pass = zadoFal0*22
 
 INSERT INTO CLIENTE
 (Cedula, Nombre, Apellido, Tel_fijo, Celular, Direccion_Cliente, Correo, Registrado_por,Estado)
@@ -205,6 +206,7 @@ SELECT * FROM PRODUCTO;
 SELECT * FROM EPS;
 
 
-
+alter table USUARIO
+modify column refresh_token varchar(255)
 SELECT a.Cedula,a.username,b.NombreCargo as Cargo FROM USUARIO a inner join CARGO b on a.cargo=b.id WHERE username='danielfacunam'
 
