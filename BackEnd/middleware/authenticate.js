@@ -12,6 +12,5 @@ export const authenticate = (req, res, next) => {
     res.status(401).json(jsonResponse(401,{ error: 'No Token Provided.' }));
   }
   req.user = {... decoded.data};
-  console.log("decode" + decoded.data)
   next();
 }

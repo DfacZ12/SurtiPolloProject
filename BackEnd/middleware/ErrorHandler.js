@@ -1,11 +1,17 @@
-export const errorHandler = (err, req, res) => {
-  console.error("Error en el servidor:", err);
-  const isClientError = err.statusCode && err.statusCode < 500;
+export const errorHandler = (err, req, res, next) => {
+  if (err.response) {
+    return res
+      .status(err.statusCode || 500)
+      .json(err.response);
+  }
 
-  res.status(isClientError ? err.statusCode : 500).json({
-    statusCode: isClientError ? err.statusCode : 500,
-    body: {
-      error: isClientError ? err.message : "Internal server error",
-    },
+  const statusCode = err.statusCode && err.statusCode < 500 ? err.statusCode : 500;
+  const message = err.statusCode && err.statusCode < 500
+    ? err.message
+    : "Internal server error";
+
+  res.status(statusCode).json({
+    statusCode,
+    body: { error: message },
   });
 };

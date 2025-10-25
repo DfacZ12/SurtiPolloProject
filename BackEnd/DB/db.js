@@ -1,8 +1,10 @@
 import mysql from 'mysql2/promise';
+import { jsonResponse } from '../lib/jsonResponse.js';
 
 let connection;
 
 export const connectDB = async () => {
+  try{
     if(!connection) {
         connection = await mysql.createConnection({
             host: process.env.DB_HOST,
@@ -13,4 +15,10 @@ export const connectDB = async () => {
         })
     }
     return connection;
+  } catch (error) {
+    const err = new Error('Ha ocurrido un error, contacte al administrador.');
+    err.statusCode = 500;
+    err.response = jsonResponse(500, { error: err.message });
+    throw err;
+  }
 }
