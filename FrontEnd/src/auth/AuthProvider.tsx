@@ -4,11 +4,19 @@ import type {
   AuthResponse,
   User,
 } from "../interfaces/types";
-import axios from "axios";
+import axiosClient from "./axiosClient";
+import { toast } from "react-hot-toast";
 import { API_URL } from "./consts";
+import { jwtDecode } from "jwt-decode";
 
 interface AuthProviderProps {
   children: React.ReactNode;
+}
+
+interface DecodedToken {
+  exp: number;
+  iat: number;
+  [key: string]: unknown;
 }
 
 const AuthContext = createContext({
@@ -26,30 +34,33 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User>();
   const [isLoading, setIsLoading] = useState(true);
 
-
   useEffect(() => {
     checkAuth();
   }, []);
+
+  const isTokenExpired = (token: string): boolean => {
+    try {
+      const decoded = jwtDecode<DecodedToken>(token);
+      const now = Date.now() / 1000; // segundos
+      return decoded.exp < now;
+    } catch {
+      return true; // si falla el decode, asumimos que no es válido
+    }
+  };
 
   const requestNewAccessToken = async (refreshToken: string) => {
     try {
       const config = {
         headers: { Authorization: `Bearer ${refreshToken}` },
       };
-      const response = await axios.post(`${API_URL}/refresh-token`, {}, config);
+      const response = await axiosClient.post(`${API_URL}/refresh-token`,{},config);
       if (response.status === 201) {
         const json = response.data as AccesTokenResponse;
         return json.body.accessToken;
       }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log(
-          "Axios error RefreshToken:",
-          error.response?.data.body.error || error.message
-        );
-        const json = await error.response?.data;
-        throw new Error(json.body.error || error.message);
-      }
+    } catch (error: unknown) {
+      console.error("Error renovando el token:", error);
+      tokenExpiredAction("Tu sesión ha expirado. Por favor, inicia sesión nuevamente.");
     }
   };
 
@@ -57,11 +68,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const getRefreshToken = (): string | null => {
     const tokenData = localStorage.getItem("tk");
-    if (tokenData) {
-      const token = JSON.parse(tokenData);
-      return token;
-    }
-    return null;
+    return tokenData ? JSON.parse(tokenData) : null;
   };
 
   const saveUser = (userData: AuthResponse) => {
@@ -70,26 +77,87 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       userData.body.accessToken,
       userData.body.refreshToken
     );
-    console.log("User saved:", userData.body.infoUser);
   };
 
-  const checkAuth = async () => {
-    try{
-      const token = getRefreshToken();
-      if (token) {
-        const newAccessToken = await requestNewAccessToken(token);
-        if (newAccessToken) {
-          const userInfo = await getUserInfo(newAccessToken);
-          if (userInfo) {
-            saveSessionInfo(userInfo, newAccessToken, token);
+  const saveSessionInfo = (
+    userInfo: User,
+    newAccessToken: string,
+    refreshToken: string
+  ) => {
+    setAccessToken(accessToken);
+    localStorage.setItem("tk", JSON.stringify(refreshToken));
+    setUser(userInfo);
+    setIsAuth(true);
+    scheduleTokenRefresh(newAccessToken, refreshToken);
+  };
+
+  const scheduleTokenRefresh = (token: string, refreshToken: string) => {
+    try {
+      const decoded = safeDecode(token);
+      if (!decoded) return true;
+      const expiresInMs = decoded.exp * 1000 - Date.now() - 60_000;
+      if (expiresInMs > 0) {
+        setTimeout(async () => {
+          console.log("Renovando token antes de que expire...");
+          const newToken = await requestNewAccessToken(refreshToken);
+          if (newToken) {
+            const userInfo = await getUserInfo(newToken);
+            if (userInfo) saveSessionInfo(userInfo, newToken, refreshToken);
           }
-        }
+        }, expiresInMs);
       }
-    }catch(error){
-      console.error("Error during authentication check:", error);
-    }finally{
+    } catch (err) {
+      console.warn("No se pudo programar el refresh automático:", err);
+    }
+  };
+
+  const safeDecode = (token: string): DecodedToken | null => {
+  try {
+    return jwtDecode<DecodedToken>(token);
+  } catch {
+    return null;
+  }
+};
+
+  const checkAuth = async () => {
+    try {
+      const refreshToken = getRefreshToken();
+      if (!refreshToken) {
+        setIsLoading(false);
+        return;
+      }
+      const newAccessToken = await requestNewAccessToken(refreshToken);
+      if (!newAccessToken) {
+        tokenExpiredAction("Tu sesión ha expirado. Por favor, inicia sesión nuevamente.");
+        return;
+      }
+      if (isTokenExpired(newAccessToken)) {
+          tokenExpiredAction("Tu sesión ha expirado. Por favor, inicia sesión nuevamente.");
+          return;
+      }
+      const userInfo = await getUserInfo(newAccessToken);
+      if (!userInfo) {
+        toast.error("Error al recuperar la información del usuario.");
+        setIsLoading(false);
+        return;
+      }
+      saveSessionInfo(userInfo, newAccessToken, refreshToken);
+    } catch (error) {
+      console.error("Error durante checkAuth:", error);
+    } finally {
       setIsLoading(false);
     }
+  };
+
+  const tokenExpiredAction = (toastMsg: string): void => {
+    toast.error(toastMsg);
+    localStorage.removeItem("tk");
+    setIsAuth(false);
+    setUser(undefined);
+    setIsLoading(false);
+    setTimeout(() => {
+      window.location.href = "/"; // redirige al login
+    }, 1500);
   };
 
   const getUserInfo = async (accessToken: string) => {
@@ -97,41 +165,30 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const config = {
         headers: { Authorization: `Bearer ${accessToken}` },
       };
-      const response = await axios.get(`${API_URL}/userInfoToken`, config);
+      const response = await axiosClient.get(
+        `${API_URL}/userInfoToken`,
+        config
+      );
       if (response.status === 201) {
-        const json = await response.data;
-        console.log("UserInfo body:", json.body);
-
-        return json.body;
+        return response.data.body;
       }
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log(
-          "Axios error UserInfo:",
-          error.response?.data.body.error || error.message
-        );
-        const json = await error.response?.data;
-        throw new Error(json.body.error || error.message);
-      }
+      console.error("Error obteniendo info del usuario:", error);
     }
   };
 
-  const saveSessionInfo = (
-    userInfo: User,
-    accessToken: string,
-    refreshToken: string
-  ) => {
-    setAccessToken(accessToken);
-    localStorage.setItem("tk", JSON.stringify(refreshToken));
-    setUser(userInfo);
-    setIsAuth(true);
-  };
-
-  const getUser = ():User | undefined => user;
+  const getUser = (): User | undefined => user;
 
   return (
     <AuthContext.Provider
-      value={{ isAuth, getAccessToken, saveUser, getRefreshToken, getUser, isLoading }}
+      value={{
+        isAuth,
+        getAccessToken,
+        saveUser,
+        getRefreshToken,
+        getUser,
+        isLoading,
+      }}
     >
       {children}
     </AuthContext.Provider>

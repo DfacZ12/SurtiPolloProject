@@ -13,8 +13,9 @@ export interface AuthResponseError{
 }
 
 export interface User{
-  cedula: number;
+  cc: number;
   username: string;
+  name: string;
   cargo: string;
 }
 

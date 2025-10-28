@@ -14,7 +14,7 @@ export default function Alert({title, message, type }: AlertProps) {
     info: "bg-blue-100 text-blue-800",
   };
   return (
-    <div className="space-y-6 p-4 max-w-screen-xl mx-auto">
+    <div>
       <div className={`p-4 ${colorClasses[type]} rounded-lg`} role="alert">
         <h3 className="font-bold text-base mb-1">{title}</h3>
         <p className="text-sm font-medium">{message}</p>
