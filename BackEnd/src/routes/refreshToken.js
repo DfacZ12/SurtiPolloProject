@@ -19,13 +19,11 @@ export default router.post('/', async (req, res,next) => {
     if(foundRfTk.length === 0){
       return res.status(401).send(jsonResponse(401, { error: 'Unauthorized' }));
     }
-    console.log("Refresh token encontrado en DB:", foundRfTk[0].refresh_token);
     const payload = verifyTokens.verifyRefreshToken(foundRfTk[0].refresh_token);
 
     if(!payload)return res.status(401).send(jsonResponse(401, { error: 'Unauthorized' }));
 
     const accessToken = genToken.generateAccessToken(payload.data);
-    console.log("Nuevo access token generado:", payload.data);
     return res.status(201).json(jsonResponse(201, { accessToken: accessToken }));
 
   } catch (error) {

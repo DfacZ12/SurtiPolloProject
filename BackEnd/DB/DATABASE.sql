@@ -36,7 +36,7 @@ CREATE TABLE USUARIO (
   password VARCHAR(150) NOT NULL,
   Cargo TINYINT NOT NULL,
   Estado BIT NOT NULL,
-  refresh_token varchar(150),
+  refresh_token varchar(700),
   CONSTRAINT fk_usuario_eps FOREIGN KEY (EPS) REFERENCES EPS(COD_EPS),
   CONSTRAINT fk_usuario_registra FOREIGN KEY (Registrado_Por) REFERENCES USUARIO(Cedula),
   CONSTRAINT fk_usuario_cargo FOREIGN KEY (Cargo) REFERENCES CARGO(ID)
@@ -207,6 +207,6 @@ SELECT * FROM EPS;
 
 
 alter table USUARIO
-modify column refresh_token varchar(255)
-SELECT a.Cedula,a.username,b.NombreCargo as Cargo FROM USUARIO a inner join CARGO b on a.cargo=b.id WHERE username='danielfacunam'
+modify column refresh_token varchar(700)
+
 

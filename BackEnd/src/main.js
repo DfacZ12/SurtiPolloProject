@@ -1,6 +1,6 @@
+import "dotenv/config"; // equivale a dotenv.config()
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import { errorHandler } from './../middleware/ErrorHandler.js';
 import {authenticate} from '../middleware/authenticate.js';
 
@@ -11,7 +11,6 @@ import refreshTokenRouter from './routes/refreshToken.js';
 
 const app = express();
 
-dotenv.config();
 
 const port = process.env.PORT || 3000;
 
@@ -28,7 +27,6 @@ app.use('/api/userInfoToken', authenticate, userRouter);
 app.use('/api/signout',signoutRouter);
 
 app.use(errorHandler);
-// app.use(authenticate)
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
