@@ -33,10 +33,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [accessToken, setAccessToken] = useState<string>("");
   const [user, setUser] = useState<User>();
   const [isLoading, setIsLoading] = useState(true);
+  let isRefreshing = false;
+  let refreshPromise: Promise<{ accessToken: string; refreshToken: string; } | null> | null = null;
 
   useEffect(() => {
-    checkAuth();
+    checkAuth()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+
 
   const isTokenExpired = (token: string): boolean => {
     try {
@@ -48,21 +53,41 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
+
   const requestNewAccessToken = async (refreshToken: string) => {
-    try {
-      const config = {
-        headers: { Authorization: `Bearer ${refreshToken}` },
-      };
-      const response = await axiosClient.post(`${API_URL}/refresh-token`,{},config);
-      if (response.status === 201) {
-        const json = response.data as AccesTokenResponse;
-        return json.body.accessToken;
+    if (isRefreshing && refreshPromise) return refreshPromise;
+    isRefreshing = true;
+
+    refreshPromise = (async () => {
+      try {
+        const config = {
+          headers: { Authorization: `Bearer ${refreshToken}` },
+        };
+        const response = await axiosClient.post(
+          `${API_URL}/refresh-token`,
+          {},
+          config
+        );
+
+        if (response.status === 201) {
+          const json = response.data as AccesTokenResponse;
+          const { accessToken, refreshToken: newRefreshToken } = json.body;
+          localStorage.setItem("tk", JSON.stringify(newRefreshToken));
+          return { accessToken, refreshToken: newRefreshToken };
+        }
+        return null;
+      } catch (error) {
+        console.error("Error renovando el token:", error);
+        return null
+      }finally {
+        isRefreshing = false;
+        refreshPromise = null;
       }
-    } catch (error: unknown) {
-      console.error("Error renovando el token:", error);
-      tokenExpiredAction("Tu sesión ha expirado. Por favor, inicia sesión nuevamente.");
-    }
-  };
+    })();
+
+  return refreshPromise;
+};
+
 
   const getAccessToken = () => accessToken;
 
@@ -84,7 +109,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     newAccessToken: string,
     refreshToken: string
   ) => {
-    setAccessToken(accessToken);
+    setAccessToken(newAccessToken);
     localStorage.setItem("tk", JSON.stringify(refreshToken));
     setUser(userInfo);
     setIsAuth(true);
@@ -95,14 +120,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       const decoded = safeDecode(token);
       if (!decoded) return true;
-      const expiresInMs = decoded.exp * 1000 - Date.now() - 60_000;
+      const expiresInMs = decoded.exp * 1000 - Date.now() - 60_000; //
       if (expiresInMs > 0) {
         setTimeout(async () => {
-          console.log("Renovando token antes de que expire...");
           const newToken = await requestNewAccessToken(refreshToken);
           if (newToken) {
-            const userInfo = await getUserInfo(newToken);
-            if (userInfo) saveSessionInfo(userInfo, newToken, refreshToken);
+            const userInfo = await getUserInfo(newToken.accessToken);
+            if (userInfo) saveSessionInfo(userInfo, newToken.accessToken, refreshToken);
           }
         }, expiresInMs);
       }
@@ -112,28 +136,33 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const safeDecode = (token: string): DecodedToken | null => {
-  try {
-    return jwtDecode<DecodedToken>(token);
-  } catch {
-    return null;
-  }
-};
+    try {
+      return jwtDecode<DecodedToken>(token);
+    } catch {
+      return null;
+    }
+  };
 
   const checkAuth = async () => {
     try {
-      const refreshToken = getRefreshToken();
-      if (!refreshToken) {
+      const oldRefreshToken  = getRefreshToken();
+      if (!oldRefreshToken ) {
         setIsLoading(false);
         return;
       }
-      const newAccessToken = await requestNewAccessToken(refreshToken);
-      if (!newAccessToken) {
-        tokenExpiredAction("Tu sesión ha expirado. Por favor, inicia sesión nuevamente.");
+      const tokenPair = await requestNewAccessToken(oldRefreshToken );
+      if (!tokenPair) {
+        tokenExpiredAction(
+          "Tu sesión ha expirado. Por favor, inicia sesión nuevamente."
+        );
         return;
       }
+      const { accessToken: newAccessToken, refreshToken: newRefreshToken } = tokenPair;
       if (isTokenExpired(newAccessToken)) {
-          tokenExpiredAction("Tu sesión ha expirado. Por favor, inicia sesión nuevamente.");
-          return;
+        tokenExpiredAction(
+          "Tu sesión ha expirado. Por favor, inicia sesión nuevamente."
+        );
+        return;
       }
       const userInfo = await getUserInfo(newAccessToken);
       if (!userInfo) {
@@ -141,7 +170,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setIsLoading(false);
         return;
       }
-      saveSessionInfo(userInfo, newAccessToken, refreshToken);
+      saveSessionInfo(userInfo, newAccessToken, newRefreshToken);
     } catch (error) {
       console.error("Error durante checkAuth:", error);
     } finally {
@@ -155,9 +184,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setIsAuth(false);
     setUser(undefined);
     setIsLoading(false);
-    setTimeout(() => {
-      window.location.href = "/"; // redirige al login
-    }, 1500);
+    // setTimeout(() => {
+    //   window.location.href = "/"; // redirige al login
+    // }, 1500);
   };
 
   const getUserInfo = async (accessToken: string) => {
@@ -195,4 +224,5 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => useContext(AuthContext);

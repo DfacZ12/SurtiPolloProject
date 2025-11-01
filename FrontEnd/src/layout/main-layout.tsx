@@ -3,13 +3,14 @@ interface MainLayoutProps {
   children: React.ReactNode;
 }
 
-export default function MainLayout({ children }: MainLayoutProps) {
+const MainLayout = ({ children }: MainLayoutProps) => {
   return (
     <>
       <main>
         {children}
       </main>
-
     </>
   );
 }
+
+export default MainLayout;

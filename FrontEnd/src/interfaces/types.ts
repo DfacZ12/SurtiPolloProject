@@ -16,6 +16,7 @@ export interface User{
   cc: number;
   username: string;
   name: string;
+  lastname: string;
   cargo: string;
 }
 
@@ -23,6 +24,7 @@ export interface AccesTokenResponse{
   statusCode: number;
   body:{
     accessToken: string;
+    refreshToken: string;
   },
   error?: string;
 }
