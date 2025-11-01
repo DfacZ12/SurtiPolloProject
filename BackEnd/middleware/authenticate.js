@@ -7,15 +7,15 @@ export const authenticate = (req, res, next) => {
     const token = getTokenFromHeader(req.headers);
     if (!token) {
       return res
-        .status(401)
-        .json(jsonResponse(401, { error: "No Token Provided." }));
+      .status(401)
+      .json(jsonResponse(401, { error: "No Token Provided." }));
     }
 
     const decoded = verifyTokens.verifyAccessToken(token);
     if (!decoded) {
       return res
-        .status(401)
-        .json(jsonResponse(401, { error: "Invalid or expired token." }));
+      .status(401)
+      .json(jsonResponse(401, { error: "Invalid or expired token." }));
     }
 
     req.user = { ...decoded.data };

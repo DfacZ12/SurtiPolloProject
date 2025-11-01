@@ -1,3 +1,6 @@
+-- CREATE DATABASE surtipollobd;
+-- use surtipollobd;
+
 -- ==============================
 -- CREAR TABLA EPS
 -- ==============================
@@ -37,6 +40,7 @@ CREATE TABLE USUARIO (
   Cargo TINYINT NOT NULL,
   Estado BIT NOT NULL,
   refresh_token varchar(700),
+  fecha_creacion date default (current_date()),
   CONSTRAINT fk_usuario_eps FOREIGN KEY (EPS) REFERENCES EPS(COD_EPS),
   CONSTRAINT fk_usuario_registra FOREIGN KEY (Registrado_Por) REFERENCES USUARIO(Cedula),
   CONSTRAINT fk_usuario_cargo FOREIGN KEY (Cargo) REFERENCES CARGO(ID)
@@ -205,8 +209,13 @@ SELECT * FROM CARGO;
 SELECT * FROM PRODUCTO;
 SELECT * FROM EPS;
 
-
 alter table USUARIO
-modify column refresh_token varchar(700)
+add column fecha_creacion date default (current_date()) 
+
+
+SELECT * FROM USUARIO WHERE refresh_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImNjIjoxMDAxMjE5MjcxLCJ1c2VybmFtZSI6ImRhbmllbGZhY3VuYW0ifSwianRpIjoiY2RjODhmNjYtM2U4Mi00Zjg2LTllYWUtOGUzMzM4NDY4YWI3IiwidHlwZSI6InJlZnJlc2giLCJpYXQiOjE3NjE5NTk1ODMsImV4cCI6MTc2MjU2NDM4M30.HUMpbST9jsXR4PWL54rqzoC5FI1SLX2iI1wnHlQGF5E'
+-- 1 Token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImNjIjoxMDAxMjE5MjcxLCJ1c2VybmFtZSI6ImRhbmllbGZhY3VuYW0ifSwianRpIjoiODVkNTcyZDEtNDFlNS00YjQ0LWEzNDctOTlmODE5NmY3ZTMxIiwidHlwZSI6InJlZnJlc2giLCJpYXQiOjE3NjE5NTQxNDQsImV4cCI6MTc2MjU1ODk0NH0.2O8aouMUPGQap00sg8L73ulYINtVBvTa0ZzTBT6n9kM
+-- 2 Token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImNjIjoxMDAxMjE5MjcxLCJ1c2VybmFtZSI6ImRhbmllbGZhY3VuYW0iLCJuYW1lIjoiRGFuaWVsIiwibGFzdG5hbWUiOiJBY3XDsWEiLCJyb2xlIjoxfSwianRpIjoiYWI4YzFkZmItMjY4OC00ZDIwLTg4MzctYjgzM2Y0YWM4ZDEwIiwidHlwZSI6InJlZnJlc2giLCJpYXQiOjE3NjE5NTQyNTcsImV4cCI6MTc2MjU1OTA1N30.Y0fS5oiIfRCUcWZKXP_RhfaicqyLS_wOatF4RzmjraQ
+-- 3 Token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImNjIjoxMDAxMjE5MjcxLCJ1c2VybmFtZSI6ImRhbmllbGZhY3VuYW0ifSwianRpIjoiN2U5OTJlZjAtYmVhYi00NTY5LTkwMmYtZDYzNmMzYjg4M2Y0IiwidHlwZSI6InJlZnJlc2giLCJpYXQiOjE3NjE5NTQzMDgsImV4cCI6MTc2MjU1OTEwOH0.bjOHVX2VdHGjWcf5UWXwHhXt178Ps8VfTaQGeHfpxUA
 
 

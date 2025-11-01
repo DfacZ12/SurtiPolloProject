@@ -22,7 +22,7 @@ export default routerLogin.post('/', async (req, res,next) => {
         if (!isMatch)return res.status(401).json(jsonResponse(401, { error: 'Usuario o Contraseña Incorrectos.' }));
 
         const infoUser = getInfoUSer(user[0]);//extrae la info necesaria del usuario
-
+      console.log(infoUser)
         // Generar access y refresh tokens
         const accessToken = genToken.generateAccessToken(infoUser);
         const refreshToken = genToken.generateRefreshToken(infoUser);

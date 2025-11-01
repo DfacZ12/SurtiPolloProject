@@ -24,7 +24,7 @@ app.use(express.json());
 app.use('/api/login', loginRouter);
 app.use('/api/refresh-token', refreshTokenRouter);
 app.use('/api/userInfoToken', authenticate, userRouter);
-app.use('/api/signout',signoutRouter);
+app.use('/api/signout',signoutRouter);//* Pendiente Por realizar endpoint de signout
 
 app.use(errorHandler);
 

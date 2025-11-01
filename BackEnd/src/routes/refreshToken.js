@@ -1,35 +1,61 @@
-import express from 'express';
-import { jsonResponse } from '../../lib/jsonResponse.js';
-import { connectDB } from '../../DB/db.js';
-import getTokenFromHeader from '../../auth/getTokenFromHeader.js';
-import verifyTokens from '../../auth/verifyTokens.js';
-import genToken from '../../auth/generateToken.js';
+import express from "express";
+import { jsonResponse } from "../../lib/jsonResponse.js";
+import { connectDB } from "../../DB/db.js";
+import verifyTokens from "../../auth/verifyTokens.js";
+import genToken from "../../auth/generateToken.js";
+import getInfoUSer from  '../../lib/getUserInfo.js'
 
 const router = express.Router();
 
-export default router.post('/', async (req, res,next) => {
-  const refreshToken = getTokenFromHeader(req.headers);
-  if(!refreshToken){
-    res.status(401).send(jsonResponse(401, { error: 'Unauthorized' }));
-    return
+router.post("/", async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json(jsonResponse(401, { error: "No token provided" }));
   }
+
+  const refreshToken = authHeader.split(" ")[1];
+
   try {
-    const db = await connectDB();
-    const [foundRfTk] = await db.execute('SELECT refresh_token FROM USUARIO WHERE refresh_token = ?', [refreshToken]);
-    if(foundRfTk.length === 0){
-      return res.status(401).send(jsonResponse(401, { error: 'Unauthorized' }));
+    //Verificar firma/expiración del refresh token
+    const decoded = verifyTokens.verifyRefreshToken(refreshToken);
+    if (!decoded) {
+      return res.status(403).json(jsonResponse(403, { error: "Invalid or expired refresh token" }));
     }
-    const payload = verifyTokens.verifyRefreshToken(foundRfTk[0].refresh_token);
 
-    if(!payload)return res.status(401).send(jsonResponse(401, { error: 'Unauthorized' }));
+    const db = await connectDB();
+    const [userRows] = await db.execute(
+      "SELECT * FROM USUARIO WHERE refresh_token = ?",
+      [refreshToken]
+    );
 
-    const accessToken = genToken.generateAccessToken(payload.data);
-    return res.status(201).json(jsonResponse(201, { accessToken: accessToken }));
+    if (userRows.length === 0) {
+      return res.status(403).json(jsonResponse(403, { error: "Refresh token not found in DB" }));
+    }
 
-  } catch (error) {
-    console.log("Error en refresh token:", error);
-    next(error);
+    const user = userRows[0];
+    const infoUser = getInfoUSer(user)
+
+    //Generar nuevos tokens
+    const newAccessToken = genToken.generateAccessToken(infoUser);
+    const newRefreshToken = genToken.generateRefreshToken(infoUser);
+
+    //Guardar nuevo refresh token en DB
+    await db.execute("UPDATE USUARIO SET refresh_token = ? WHERE Cedula = ?", [
+      newRefreshToken,
+      infoUser.cc,
+    ]);
+
+
+    return res.status(201).json(
+      jsonResponse(201, {
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken,
+      })
+    );
+  } catch (err) {
+    console.error("Error in /refresh-token:", err);
+    next(err);
   }
-
 });
 
+export default router;
