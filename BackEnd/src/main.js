@@ -1,4 +1,4 @@
-import "dotenv/config"; // equivale a dotenv.config()
+import "dotenv/config";
 import express from 'express';
 import cors from 'cors';
 import { errorHandler } from './../middleware/ErrorHandler.js';
@@ -8,6 +8,14 @@ import userRouter from './routes/userInfoToken.js';
 import loginRouter from './routes/login.js';
 import signoutRouter from './routes/signout.js';
 import refreshTokenRouter from './routes/refreshToken.js';
+
+/**
+ * APIS
+ */
+import selectUSerRouter from './apis/user/selectUser.js'
+import epsRouter from './apis/eps/selectEps.js'
+// import RoleRouter from './apis/user/selectRole.js'
+
 
 const app = express();
 
@@ -22,9 +30,12 @@ app.use(cors({
 app.use(express.json());
 
 app.use('/api/login', loginRouter);
-app.use('/api/refresh-token', refreshTokenRouter);
+app.use('/api/refreshToken', refreshTokenRouter);
 app.use('/api/userInfoToken', authenticate, userRouter);
-app.use('/api/signout',signoutRouter);//* Pendiente Por realizar endpoint de signout
+app.use('/api/signout',signoutRouter);//! Pendiente Por realizar endpoint de signout
+app.use('/api/selectUser', selectUSerRouter)//!Hace falta poner el middleware
+app.use('/api/selectEps',epsRouter)
+// app.use('/api/selectRoles',RoleRouter)
 
 app.use(errorHandler);
 
