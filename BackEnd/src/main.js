@@ -14,7 +14,7 @@ import refreshTokenRouter from './routes/refreshToken.js';
  */
 import selectUSerRouter from './apis/user/selectUser.js'
 import epsRouter from './apis/eps/selectEps.js'
-// import RoleRouter from './apis/user/selectRole.js'
+import RoleRouter from './apis/user/selectRole.js'
 
 
 const app = express();
@@ -35,7 +35,7 @@ app.use('/api/userInfoToken', authenticate, userRouter);
 app.use('/api/signout',signoutRouter);//! Pendiente Por realizar endpoint de signout
 app.use('/api/selectUser', selectUSerRouter)//!Hace falta poner el middleware
 app.use('/api/selectEps',epsRouter)
-// app.use('/api/selectRoles',RoleRouter)
+app.use('/api/selectRoles',RoleRouter)
 
 app.use(errorHandler);
 
