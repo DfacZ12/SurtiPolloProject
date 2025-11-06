@@ -13,7 +13,10 @@ export default routerLogin.post('/', async (req, res,next) => {
     try {
         const db = await connectDB();
 
-        const [user] = await db.execute('SELECT * FROM USUARIO WHERE username = ?', [username]);
+        const [user] = await db.execute(
+        `SELECT a.Cedula,a.username,a.password,a.Nombre,a.Apellido,b.NombreCargo Cargo
+          FROM USUARIO a join CARGO b ON a.Cargo=b.ID WHERE username = ?`, [username]
+        );
 
         if (user.length === 0)return res.status(401).json(jsonResponse(401, { error: 'Usuario o Contraseña Incorrectos.' }));
 
@@ -22,15 +25,13 @@ export default routerLogin.post('/', async (req, res,next) => {
         if (!isMatch)return res.status(401).json(jsonResponse(401, { error: 'Usuario o Contraseña Incorrectos.' }));
 
         const infoUser = getInfoUSer(user[0]);//extrae la info necesaria del usuario
-      console.log(infoUser)
         // Generar access y refresh tokens
         const accessToken = genToken.generateAccessToken(infoUser);
         const refreshToken = genToken.generateRefreshToken(infoUser);
         try{
             await db.execute('UPDATE USUARIO SET refresh_token = ? WHERE Cedula = ?', [refreshToken, infoUser.cc]);
-        }catch(err){
-          console.error("Error al guardar refresh token en DB:", err);
-           return res.status(500).json(jsonResponse(500,{ error: 'Ha ocurrido un error inesperado, intente de nuevo más tarde.'}))//si hay un error al guardar el refresh token
+        }catch{
+          return res.status(500).json(jsonResponse(500,{ error: 'Ha ocurrido un error inesperado, intente de nuevo más tarde.'}))//si hay un error al guardar el refresh token
         }
         return res.status(201).json(jsonResponse(201, {infoUser, accessToken, refreshToken }))//envia el token al cliente
     } catch (error) {

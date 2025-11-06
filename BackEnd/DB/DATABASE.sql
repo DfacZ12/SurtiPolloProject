@@ -210,7 +210,8 @@ SELECT * FROM PRODUCTO;
 SELECT * FROM EPS;
 
 alter table USUARIO
-add column fecha_creacion date default (current_date()) 
+add column fecha_creacion date default (current_date());
 
 
-SELECT * FROM USUARIO 
+SELECT a.cedula,a.username,a.nombre,a.apellido,b.NombreCargo Cargo FROM
+USUARIO a join CARGO b ON a.Cargo=b.ID

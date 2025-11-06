@@ -2,11 +2,9 @@ import express from 'express'
 import { jsonResponse } from '../../../lib/jsonResponse.js';
 import { connectDB } from '../../../DB/db.js';
 
+const routerSelectEps = express.Router();
 
-
-const routerSelectUser = express.Router();
-
-export default routerSelectUser.get('/', async (req,res)=>{
+export default routerSelectEps.get('/', async (req,res)=>{
   const db = await connectDB();
    try {
 

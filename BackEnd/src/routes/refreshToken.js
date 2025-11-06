@@ -19,6 +19,7 @@ router.post("/", async (req, res, next) => {
     //Verificar firma/expiración del refresh token
     const decoded = verifyTokens.verifyRefreshToken(refreshToken);
     if (!decoded) {
+      console.log(decoded)
       return res.status(403).json(jsonResponse(403, { error: "Invalid or expired refresh token" }));
     }
 
@@ -53,7 +54,7 @@ router.post("/", async (req, res, next) => {
       })
     );
   } catch (err) {
-    console.error("Error in /refresh-token:", err);
+    console.log("Error in /refresh-token:", err);
     next(err);
   }
 });

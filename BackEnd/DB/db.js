@@ -16,7 +16,7 @@ export const connectDB = async () => {
     }
     return connection;
   } catch (error) {
-    console.error("Error connecting to the database:", error);
+    console.log("Error connecting to the database:", error);
     const err = new Error('Ha ocurrido un error, contacte al administrador.');
     err.statusCode = 500;
     err.response = jsonResponse(500, { error: err.message });

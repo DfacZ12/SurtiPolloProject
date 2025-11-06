@@ -1,32 +1,44 @@
 import express from 'express'
 import { jsonResponse } from '../../../lib/jsonResponse.js';
 import { connectDB } from '../../../DB/db.js';
-
-
+import { authorizeRole } from '../../../auth/authRoles.js'
 
 const routerSelectUser = express.Router();
 
-export default routerSelectUser.get('/', async (req,res)=>{
-  const {rol} = req.query
-  console.log(rol)
+routerSelectUser.get('/', authorizeRole([1]), async (req, res) => {
   const db = await connectDB();
-   try {
 
-    if(rol !== '1')return res.status(401).json(jsonResponse(401, { error: 'No posee los permisos necesarios.' }));
+  try {
+    // Extraes el rol desde el token
+    const { rol } = req.user;
 
-    const [info] = await db.execute(
-    `SELECT a.cedula, a.Nombre, a.Apellido, a.Direccion, b.EPS_Nombre EPS, a.Tel_Fijo, a.Celular,a.Correo,aa.username Registrador_Por,a.username,c.NombreCargo cargo,a.fecha_creacion
-    FROM USUARIO a join USUARIO aa on a.cedula=aa.Registrado_Por join EPS b on a.EPS=b.COD_EPS
-    join CARGO c on a.cargo=c.id
-    WHERE a.estado=true ORDER BY Nombre DESC`
-    );
+    if (rol !== 1) {
+      return res
+        .status(403)
+        .json(jsonResponse(403, { error: 'No posee los permisos necesarios.' }));
+    }
 
-    if (info.length === 0)return res.status(404).json(jsonResponse(404, { error: 'No se encuentran usuarios registrados.' }));
+    const [info] = await db.execute(`
+      SELECT a.cedula, a.Nombre, a.Apellido, a.Direccion,
+             b.EPS_Nombre AS EPS, a.Tel_Fijo, a.Celular, a.Correo,
+             aa.username AS Registrador_Por, a.username,
+             c.NombreCargo AS cargo, a.fecha_creacion
+      FROM USUARIO a
+      JOIN USUARIO aa ON a.cedula = aa.Registrado_Por
+      JOIN EPS b ON a.EPS = b.COD_EPS
+      JOIN CARGO c ON a.cargo = c.id
+      WHERE a.estado = true
+      ORDER BY Nombre DESC
+    `);
 
-
+    if (info.length === 0) {
+      return res.status(404).json(jsonResponse(404, { error: 'No se encuentran usuarios registrados.' }));
+    }
     res.status(200).json(jsonResponse(200, info));
   } catch (error) {
     console.log("Error al obtener usuarios:", error);
-    res.status(500).json({ message: "Error interno del servidor" });
+    res.status(500).json(jsonResponse(500, { message: "Error interno del servidor" }));
   }
-})
+});
+
+export default routerSelectUser;
