@@ -1,65 +1,15 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUsers, faBoxOpen, faDolly, faCartShopping, faUserTag } from "@fortawesome/free-solid-svg-icons";
+import { menuItems } from "../interfaces/MenuConfigSideBar"
+import type { iSubMenuItem } from "../interfaces/MenuConfigSideBar"
 import type { IconProp } from "@fortawesome/fontawesome-svg-core";
 
-interface SubMenuItem {
-  label: string;
-  path: string;
+interface SidebarProps {
+  onSelectMenu?: (title: string, icon: IconProp) => void;
 }
 
-interface MenuItem {
-  id: string;
-  label: string;
-  icon: IconProp;
-  path?: string;
-  submenus?: SubMenuItem[];
-}
-
-const menuItems: MenuItem[] = [
-  {
-    id: "usuarios",
-    label: "Usuarios",
-    icon: faUsers,
-    submenus: [
-      { label: "Lista Usuarios", path: "/Users/List" },
-      { label: "Crear Usuario", path: "/Users/Create" },
-    ],
-  },
-  {
-    id: "clientes",
-    label: "clientes",
-    icon: faUserTag,
-    submenus: [
-      { label: "Lista clientes", path: "/Clients/List" },
-      { label: "Crear cliente", path: "/Clients/Create" },
-    ],
-  },
-  {
-    id: "productos",
-    label: "Productos",
-    icon: faBoxOpen,
-    submenus: [
-      { label: "Lista Productos", path: "/Products/List" },
-      { label: "Nuevo Producto", path: "/Products/Create" },
-    ],
-  },
-  {
-    id: "facuturaVenta",
-    label: "Factura Venta",
-    icon: faCartShopping,
-    path: "/SalesInvoice",
-  },
-    {
-    id: "facuturaProveedor",
-    label: "Factura Proveedor",
-    icon: faDolly,
-    path: "/SupplierInvoice",
-  },
-];
-
-export default function Sidebar() {
+export default function Sidebar({onSelectMenu}:SidebarProps) {
   const location = useLocation();
   const [openMenu, setOpenMenu] = useState<string | null>(null);
 
@@ -68,7 +18,7 @@ export default function Sidebar() {
   };
 
   const isActive = (path?: string) => path && location.pathname === path;
-  const isAnySubmenuActive = (submenus?: SubMenuItem[]) =>
+  const isAnySubmenuActive = (submenus?: iSubMenuItem[]) =>
     submenus?.some((submenu) => submenu.path === location.pathname);
 
   return (
@@ -81,7 +31,13 @@ export default function Sidebar() {
           <li key={menu.id}>
             {/* Menú principal */}
             <div
-              onClick={() => hasSubmenus && handleToggleMenu(menu.id)}
+              onClick={ () =>{
+                if (!hasSubmenus) {
+                  onSelectMenu?.(menu?.title ?? "", menu.icon);
+                  return
+                }
+                handleToggleMenu(menu.id);
+              }}
               className={`flex items-center cursor-pointer rounded-md px-3 py-2.5 text-[15px] font-medium text-slate-800 transition-all duration-300 hover:bg-[#d9f3ea]
                 ${activeParent || isActive(menu.path) ? "bg-[#d9f3ea] font-semibold" : ""}`}
             >
@@ -89,7 +45,8 @@ export default function Sidebar() {
 
               {/* Si el menú tiene link directo */}
               {menu.path ? (
-                <Link to={menu.path} className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap">
+                <Link to={menu.path}
+                 className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap">
                   {menu.label}
                 </Link>
               ) : (
@@ -125,6 +82,7 @@ export default function Sidebar() {
                 {menu.submenus!.map((submenu) => (
                   <li key={submenu.path}>
                     <Link
+                      onClick={() => onSelectMenu?.(submenu.title, menu.icon)}
                       to={submenu.path}
                       className={`block my-1 rounded-md px-3 py-2 text-[15px] font-medium text-slate-800 transition-all duration-300 hover:bg-[#d9f3ea]
                         ${isActive(submenu.path) ? "bg-[#d9f3ea] font-semibold" : ""}`}

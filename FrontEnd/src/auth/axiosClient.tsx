@@ -15,8 +15,8 @@ axiosClient.interceptors.response.use(
         duration: 4000,
       });
 
-      // Limpia tokens
-      localStorage.removeItem("tk");
+      // Limpia almacenamiento local
+      localStorage.clear();
 
       // Pequeño delay para que el toast se muestre antes de redirigir
       setTimeout(() => {

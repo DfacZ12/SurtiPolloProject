@@ -13,6 +13,7 @@ import { useAuth } from "./auth/AuthProvider";
 import Loader from "./shared/loader.tsx";
 import PortalLayout from "./layout/Portal-layout.tsx";
 import CreateUsers from "./pages/Users/CreateUsers.tsx";
+import ListUsers from "./pages/Users/ListUsers.tsx";
 
 const RootRedirect = () => {
   const { isAuth, isLoading } = useAuth();
@@ -52,7 +53,7 @@ const router = createBrowserRouter([
               },
               {
                 path: "List",
-                element: <div>🍗 Aquí iría tu página de lista de usuarios</div>,
+                element: <ListUsers/>,
               },
             ]
           },
@@ -82,7 +83,7 @@ const router = createBrowserRouter([
               },
               {
                 path: "Create",
-                element: <CreateUsers />,
+                element:<div>🍗 Aquí iría tu página de creación de usuarios</div>,
               },
               {
                 path: "List",

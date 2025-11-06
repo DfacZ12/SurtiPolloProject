@@ -26,7 +26,7 @@ const AuthContext = createContext({
   getRefreshToken: () => {},
   getUser: () => ({} as User | undefined),
   isLoading: true,
-  signOut: () => {}
+  logOut: () => {},
 });
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
@@ -65,7 +65,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           headers: { Authorization: `Bearer ${refreshToken}` },
         };
         const response = await axiosClient.post(
-          `${API_URL}/refresh-token`,
+          `${API_URL}/refreshToken`,
           {},
           config
         );
@@ -136,19 +136,18 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       if (accessExpiresInMs > 0) {
         accessTimeout = setTimeout(async () => {
           const newTokens = await requestNewAccessToken(refreshToken);
-          if (newTokens) {
-            const userInfo = await getUserInfo(newTokens.accessToken);
-            if (userInfo) {
-              saveSessionInfo(
-                userInfo,
-                newTokens.accessToken,
-                newTokens.refreshToken
-              );
-            }
-          } else {
-            console.warn("No se pudo renovar el token, cerrando sesión.");
+          if (!newTokens) {
             tokenExpiredAction(
               "Tu sesión ha expirado. Inicia sesión nuevamente."
+            );
+            return;
+          }
+          const userInfo = await getUserInfo(newTokens.accessToken);
+          if (userInfo) {
+            saveSessionInfo(
+              userInfo,
+              newTokens.accessToken,
+              newTokens.refreshToken
             );
           }
         }, accessExpiresInMs);
@@ -213,7 +212,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const tokenExpiredAction = (toastMsg: string): void => {
     toast.error(toastMsg);
-    localStorage.removeItem("tk");
+    localStorage.clear();
     setIsAuth(false);
     setUser(undefined);
     setIsLoading(false);
@@ -238,12 +237,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const getUser = (): User | undefined => user;
 
-  const signOut = () =>{
-    setIsAuth(false)
+  const logOut = () => {
+    setIsAuth(false);
     setAccessToken("");
     setUser(undefined);
-    localStorage.removeItem("tk");
-  }
+    localStorage.clear();
+  };
 
   return (
     <AuthContext.Provider
@@ -254,7 +253,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         getRefreshToken,
         getUser,
         isLoading,
-        signOut
+        logOut,
       }}
     >
       {children}

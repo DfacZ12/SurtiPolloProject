@@ -1,14 +1,19 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useAuth } from "../auth/AuthProvider";
-import {Outlet } from "react-router-dom";
+import {Outlet, useLocation } from "react-router-dom";
 import Tooltip from "../shared/Tooltip";
 import axios from "axios";
 import { API_URL } from "../auth/consts";
-import SidebarScript from "../util/sidebarScript";
 import Sidebar from "./sideBar";
 import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
+import { useEffect, useState } from "react";
+import type { IconProp } from "@fortawesome/fontawesome-svg-core";
+import { flattenMenu } from "../util/FlatMenuItem";
 
 const PortalLayout = () => {
+  const location = useLocation();
+  const [gestTitle, setGestTitle] = useState<string>("");
+  const [gestIconTitle, setGestIconTitle] = useState<IconProp>();
   const auth = useAuth();
   const name = auth.getUser()?.name;
   const lastName = auth.getUser()?.lastname;
@@ -18,22 +23,52 @@ const PortalLayout = () => {
     name && lastName
       ? `${name.charAt(0)}${lastName.charAt(0)}`.toUpperCase()
       : "";
-  const handleSignout = async (e: React.MouseEvent<HTMLButtonElement>) => {
+
+  const handleLogOut = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     try {
-      const response = await axios.delete(`${API_URL}/signout`, {
+      const response = await axios.delete(`${API_URL}/logOut`, {
         headers: { Authorization: `Bearer ${auth.getRefreshToken()}` },
       });
       if (response.status === 201) {
-        auth.signOut();
+        auth.logOut();
       }
     } catch (e) {
       console.error("error al cerrar sesión", e);
     }
   };
+
+  useEffect(() => {
+    const flat = flattenMenu();
+    const found = flat.find((item) => item.path === location.pathname);
+
+    if (found) {
+      setGestTitle(found.title);
+      setGestIconTitle(found.icon);
+      localStorage.setItem("gestTitle", found.title);
+      if (typeof found.icon === "object" && "iconName" in found.icon) {
+        localStorage.setItem("gestIconTitle", found.icon.iconName);
+      }
+    } else {
+      const savedTitle = localStorage.getItem("gestTitle");
+      const savedIcon = localStorage.getItem("gestIconTitle");
+
+      if (savedTitle) setGestTitle(savedTitle);
+
+      if (savedIcon) {
+        const allIcons = flattenMenu().reduce((acc, item) => {
+          if (typeof item.icon === "object" && "iconName" in item.icon) {
+            acc[item.icon.iconName] = item.icon;
+          }
+          return acc;
+        }, {} as Record<string, IconProp>);
+        if (allIcons[savedIcon]) setGestIconTitle(allIcons[savedIcon]);
+      }
+    }
+  }, [location]);
+
   return (
     <div className="relative h-full min-h-screen">
-      <SidebarScript />
       <div className="flex items-start">
         <nav id="sidebar" className="lg:min-w-[270px] w-max max-lg:min-w-8">
           <div
@@ -49,100 +84,16 @@ const PortalLayout = () => {
             </div>
 
             <div className="py-6 px-6 flex-1 overflow-y-auto">
-              {/* <ul className="space-y-2">
-                <li>
-                  <div
-                    className="text-slate-800 text-[15px] font-medium flex items-center cursor-pointer hover:bg-[#d9f3ea] rounded-md px-3 py-2.5 transition-all duration-300">
-                      <FontAwesomeIcon
-                      icon={faUsers}
-                      className="w-[18px] h-[18px] mr-3"
-                    />
-                    <span className="overflow-hidden text-ellipsis whitespace-nowrap">Usuarios</span>
-                    <svg xmlns="http://www.w3.org/2000/svg"
-                      className="arrowIcon w-3 fill-current -rotate-90 ml-auto transition-all duration-500"
-                      viewBox="0 0 451.847 451.847">
-                      <path
-                        d="M225.923 354.706c-8.098 0-16.195-3.092-22.369-9.263L9.27 151.157c-12.359-12.359-12.359-32.397 0-44.751 12.354-12.354 32.388-12.354 44.748 0l171.905 171.915 171.906-171.909c12.359-12.354 32.391-12.354 44.744 0 12.365 12.354 12.365 32.392 0 44.751L248.292 345.449c-6.177 6.172-14.274 9.257-22.369 9.257z"
-                        data-original="#000000" />
-                    </svg>
-                  </div>
-                  <ul className="sub menu max-h-0 overflow-hidden transition-[max-height] duration-500 ease-in-out ml-8">
-                    <li>
-                      <Link to="/Users/List"
-                        className="text-slate-800 text-[15px] font-medium block cursor-pointer hover:bg-[#d9f3ea]  rounded-md px-3 py-2 transition-all duration-300">
-                        <span>Lista Usuarios</span>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="/Users/Create"
-                        className="text-slate-800 text-[15px] font-medium block cursor-pointer hover:bg-[#d9f3ea]  rounded-md px-3 py-2 transition-all duration-300">
-                        <span>Crear Usuario</span>
-                      </Link>
-                    </li>
-                  </ul>
-                </li>
-                <li>
-                  <Link
-                    to="/Users"
-                    className="menu-item text-slate-800 text-[15px] font-medium flex items-center cursor-pointer hover:bg-[#d9f3ea]  rounded-md px-3 py-3 transition-all duration-300"
-                  >
-                    <FontAwesomeIcon
-                      icon={faUsers}
-                      className="w-[18px] h-[18px] mr-3"
-                    />
-                    <span>Usuarios</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/Products"
-                    className="menu-item text-slate-800 text-[15px] font-medium flex items-center cursor-pointer hover:bg-[#d9f3ea] rounded-md px-3 py-3 transition-all duration-300"
-                  >
-                    <FontAwesomeIcon
-                      icon={faDrumstickBite}
-                      className="w-[18px] h-[18px] mr-3"
-                    />
-                    <span>Productos</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/Clients"
-                    className="menu-item text-slate-800 text-[15px] font-medium flex items-center cursor-pointer hover:bg-[#d9f3ea] rounded-md px-3 py-3 transition-all duration-300"
-                  >
-                    <FontAwesomeIcon
-                      icon={faUserTag}
-                      className="w-[18px] h-[18px] mr-3"
-                    />
-                    <span>Clientes</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/FacturaVenta"
-                    className="menu-item text-slate-800 text-[15px] font-medium flex items-center cursor-pointer hover:bg-[#d9f3ea] rounded-md px-3 py-3 transition-all duration-300"
-                  >
-                    <FontAwesomeIcon
-                      icon={faCartShopping}
-                      className="w-[18px] h-[18px] mr-3"
-                    />
-                    <span>Factura Venta</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/FacturaProveedor"
-                    className="menu-item text-slate-800 text-[15px] font-medium flex items-center cursor-pointer hover:bg-[#d9f3ea] rounded-md px-3 py-3 transition-all duration-300"
-                  >
-                    <FontAwesomeIcon
-                      icon={faDolly}
-                      className="w-[18px] h-[18px] mr-3"
-                    />
-                    <span>Factura Proveedor</span>
-                  </Link>
-                </li>
-              </ul> */}
-              <Sidebar />
+              <Sidebar
+                onSelectMenu={(title, icon) => {
+                  setGestTitle(title);
+                  setGestIconTitle(icon);
+                  localStorage.setItem("gestTitle", title);
+                  if (typeof icon === "object" && "iconName" in icon) {
+                    localStorage.setItem("gestIconTitle", icon.iconName);
+                  }
+                }}
+              />
             </div>
             <div className="mt-auto p-6 border-t border-gray-200">
               <div className="flex items-center justify-between">
@@ -163,7 +114,7 @@ const PortalLayout = () => {
                 </div>
                 <Tooltip content="Cerrar sesión" side="top">
                   <button
-                    onClick={handleSignout}
+                    onClick={handleLogOut}
                     className="text-slate-500 hover:text-red-600 transition-colors duration-300 ml-3 cursor-pointer"
                   >
                     <FontAwesomeIcon
@@ -196,7 +147,13 @@ const PortalLayout = () => {
         </button>
 
         <section className="main-content w-full p-6 max-lg:ml-8">
-            <Outlet />
+          <h1 className="text-3xl font-bold mb-12">
+                {gestIconTitle && (
+                  <FontAwesomeIcon icon={gestIconTitle} className="w-[18px] h-[18px] mr-2" />
+                )}
+              {gestTitle}
+          </h1>
+          <Outlet />
         </section>
       </div>
     </div>

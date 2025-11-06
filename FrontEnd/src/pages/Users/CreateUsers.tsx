@@ -1,16 +1,6 @@
-import { faUser } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
 const CreateUsers = () => {
   return (
-    <>
-      <h1 className="text-3xl font-bold">
-        <span>
-          <FontAwesomeIcon icon={faUser} className="w-[18px] h-[18px] mr-2" />
-          Creación de Usuarios
-        </span>
-      </h1>
-      <div className="flex items-center justify-center mt-12">
+      <div className="flex items-center justify-center">
         <div className="w-full border p-8 rounded-xl">
           <form>
             <div className="mb-4">
@@ -201,7 +191,6 @@ const CreateUsers = () => {
           </form>
         </div>
       </div>
-    </>
   );
 };
 
