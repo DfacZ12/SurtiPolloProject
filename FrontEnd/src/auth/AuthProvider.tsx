@@ -26,6 +26,7 @@ const AuthContext = createContext({
   getRefreshToken: () => {},
   getUser: () => ({} as User | undefined),
   isLoading: true,
+  signOut: () => {}
 });
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
@@ -34,14 +35,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User>();
   const [isLoading, setIsLoading] = useState(true);
   let isRefreshing = false;
-  let refreshPromise: Promise<{ accessToken: string; refreshToken: string; } | null> | null = null;
+  let refreshPromise: Promise<{
+    accessToken: string;
+    refreshToken: string;
+  } | null> | null = null;
 
   useEffect(() => {
-    checkAuth()
+    checkAuth();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-
 
   const isTokenExpired = (token: string): boolean => {
     try {
@@ -52,7 +54,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       return true; // si falla el decode, asumimos que no es válido
     }
   };
-
 
   const requestNewAccessToken = async (refreshToken: string) => {
     if (isRefreshing && refreshPromise) return refreshPromise;
@@ -78,16 +79,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         return null;
       } catch (error) {
         console.error("Error renovando el token:", error);
-        return null
-      }finally {
+        return null;
+      } finally {
         isRefreshing = false;
         refreshPromise = null;
       }
     })();
 
-  return refreshPromise;
-};
-
+    return refreshPromise;
+  };
 
   const getAccessToken = () => accessToken;
 
@@ -116,19 +116,51 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     scheduleTokenRefresh(newAccessToken, refreshToken);
   };
 
-  const scheduleTokenRefresh = (token: string, refreshToken: string) => {
+  let refreshTimeout: ReturnType<typeof setTimeout> | null = null;
+  let accessTimeout: ReturnType<typeof setTimeout> | null = null;
+
+  const scheduleTokenRefresh = (accessToken: string, refreshToken: string) => {
     try {
-      const decoded = safeDecode(token);
-      if (!decoded) return true;
-      const expiresInMs = decoded.exp * 1000 - Date.now() - 60_000; //
-      if (expiresInMs > 0) {
-        setTimeout(async () => {
-          const newToken = await requestNewAccessToken(refreshToken);
-          if (newToken) {
-            const userInfo = await getUserInfo(newToken.accessToken);
-            if (userInfo) saveSessionInfo(userInfo, newToken.accessToken, refreshToken);
+      const decodedAccess = safeDecode(accessToken);
+      const decodedRefresh = safeDecode(refreshToken);
+      if (!decodedAccess || !decodedRefresh) return;
+
+      const accessExpiresInMs = decodedAccess.exp * 1000 - Date.now() - 60_000;
+      const refreshExpiresInMs = decodedRefresh.exp * 1000 - Date.now();
+
+      // Limpia timeouts anteriores (evita duplicaciones)
+      if (accessTimeout) clearTimeout(accessTimeout);
+      if (refreshTimeout) clearTimeout(refreshTimeout);
+
+      //Programar renovación del access token
+      if (accessExpiresInMs > 0) {
+        accessTimeout = setTimeout(async () => {
+          const newTokens = await requestNewAccessToken(refreshToken);
+          if (newTokens) {
+            const userInfo = await getUserInfo(newTokens.accessToken);
+            if (userInfo) {
+              saveSessionInfo(
+                userInfo,
+                newTokens.accessToken,
+                newTokens.refreshToken
+              );
+            }
+          } else {
+            console.warn("No se pudo renovar el token, cerrando sesión.");
+            tokenExpiredAction(
+              "Tu sesión ha expirado. Inicia sesión nuevamente."
+            );
           }
-        }, expiresInMs);
+        }, accessExpiresInMs);
+      }
+
+      //Programar cierre de sesión cuando expire el refresh token
+      if (refreshExpiresInMs > 0) {
+        refreshTimeout = setTimeout(() => {
+          tokenExpiredAction(
+            "Tu sesión ha expirado. Inicia sesión nuevamente."
+          );
+        }, refreshExpiresInMs);
       }
     } catch (err) {
       console.warn("No se pudo programar el refresh automático:", err);
@@ -145,19 +177,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const checkAuth = async () => {
     try {
-      const oldRefreshToken  = getRefreshToken();
-      if (!oldRefreshToken ) {
+      const oldRefreshToken = getRefreshToken();
+      if (!oldRefreshToken) {
         setIsLoading(false);
         return;
       }
-      const tokenPair = await requestNewAccessToken(oldRefreshToken );
+      const tokenPair = await requestNewAccessToken(oldRefreshToken);
       if (!tokenPair) {
         tokenExpiredAction(
           "Tu sesión ha expirado. Por favor, inicia sesión nuevamente."
         );
         return;
       }
-      const { accessToken: newAccessToken, refreshToken: newRefreshToken } = tokenPair;
+      const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
+        tokenPair;
       if (isTokenExpired(newAccessToken)) {
         tokenExpiredAction(
           "Tu sesión ha expirado. Por favor, inicia sesión nuevamente."
@@ -184,9 +217,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setIsAuth(false);
     setUser(undefined);
     setIsLoading(false);
-    // setTimeout(() => {
-    //   window.location.href = "/"; // redirige al login
-    // }, 1500);
   };
 
   const getUserInfo = async (accessToken: string) => {
@@ -208,6 +238,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const getUser = (): User | undefined => user;
 
+  const signOut = () =>{
+    setIsAuth(false)
+    setAccessToken("");
+    setUser(undefined);
+    localStorage.removeItem("tk");
+  }
+
   return (
     <AuthContext.Provider
       value={{
@@ -217,6 +254,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         getRefreshToken,
         getUser,
         isLoading,
+        signOut
       }}
     >
       {children}

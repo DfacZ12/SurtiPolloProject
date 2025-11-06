@@ -1,20 +1,14 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useAuth } from "../auth/AuthProvider";
-import {
-  faUsers,
-  faUserTag,
-  faDrumstickBite,
-  faDolly,
-  faCartShopping,
-  faRightFromBracket,
-} from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import {Outlet } from "react-router-dom";
 import Tooltip from "../shared/Tooltip";
+import axios from "axios";
+import { API_URL } from "../auth/consts";
+import SidebarScript from "../util/sidebarScript";
+import Sidebar from "./sideBar";
+import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 
-interface PortalLayoutProps {
-  children: React.ReactNode;
-}
-const PortalLayout = ({ children }: PortalLayoutProps)=> {
+const PortalLayout = () => {
   const auth = useAuth();
   const name = auth.getUser()?.name;
   const lastName = auth.getUser()?.lastname;
@@ -24,8 +18,22 @@ const PortalLayout = ({ children }: PortalLayoutProps)=> {
     name && lastName
       ? `${name.charAt(0)}${lastName.charAt(0)}`.toUpperCase()
       : "";
+  const handleSignout = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    try {
+      const response = await axios.delete(`${API_URL}/signout`, {
+        headers: { Authorization: `Bearer ${auth.getRefreshToken()}` },
+      });
+      if (response.status === 201) {
+        auth.signOut();
+      }
+    } catch (e) {
+      console.error("error al cerrar sesión", e);
+    }
+  };
   return (
     <div className="relative h-full min-h-screen">
+      <SidebarScript />
       <div className="flex items-start">
         <nav id="sidebar" className="lg:min-w-[270px] w-max max-lg:min-w-8">
           <div
@@ -41,11 +49,42 @@ const PortalLayout = ({ children }: PortalLayoutProps)=> {
             </div>
 
             <div className="py-6 px-6 flex-1 overflow-y-auto">
-              <ul className="space-y-2">
+              {/* <ul className="space-y-2">
+                <li>
+                  <div
+                    className="text-slate-800 text-[15px] font-medium flex items-center cursor-pointer hover:bg-[#d9f3ea] rounded-md px-3 py-2.5 transition-all duration-300">
+                      <FontAwesomeIcon
+                      icon={faUsers}
+                      className="w-[18px] h-[18px] mr-3"
+                    />
+                    <span className="overflow-hidden text-ellipsis whitespace-nowrap">Usuarios</span>
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                      className="arrowIcon w-3 fill-current -rotate-90 ml-auto transition-all duration-500"
+                      viewBox="0 0 451.847 451.847">
+                      <path
+                        d="M225.923 354.706c-8.098 0-16.195-3.092-22.369-9.263L9.27 151.157c-12.359-12.359-12.359-32.397 0-44.751 12.354-12.354 32.388-12.354 44.748 0l171.905 171.915 171.906-171.909c12.359-12.354 32.391-12.354 44.744 0 12.365 12.354 12.365 32.392 0 44.751L248.292 345.449c-6.177 6.172-14.274 9.257-22.369 9.257z"
+                        data-original="#000000" />
+                    </svg>
+                  </div>
+                  <ul className="sub menu max-h-0 overflow-hidden transition-[max-height] duration-500 ease-in-out ml-8">
+                    <li>
+                      <Link to="/Users/List"
+                        className="text-slate-800 text-[15px] font-medium block cursor-pointer hover:bg-[#d9f3ea]  rounded-md px-3 py-2 transition-all duration-300">
+                        <span>Lista Usuarios</span>
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="/Users/Create"
+                        className="text-slate-800 text-[15px] font-medium block cursor-pointer hover:bg-[#d9f3ea]  rounded-md px-3 py-2 transition-all duration-300">
+                        <span>Crear Usuario</span>
+                      </Link>
+                    </li>
+                  </ul>
+                </li>
                 <li>
                   <Link
                     to="/Users"
-                    className="menu-item text-green-800 text-[15px] font-medium flex items-center cursor-pointer bg-[#d9f3ea] hover:bg-[#d9f3ea] rounded-md px-3 py-3 transition-all duration-300"
+                    className="menu-item text-slate-800 text-[15px] font-medium flex items-center cursor-pointer hover:bg-[#d9f3ea]  rounded-md px-3 py-3 transition-all duration-300"
                   >
                     <FontAwesomeIcon
                       icon={faUsers}
@@ -56,7 +95,7 @@ const PortalLayout = ({ children }: PortalLayoutProps)=> {
                 </li>
                 <li>
                   <Link
-                    to="javascript:void(0)"
+                    to="/Products"
                     className="menu-item text-slate-800 text-[15px] font-medium flex items-center cursor-pointer hover:bg-[#d9f3ea] rounded-md px-3 py-3 transition-all duration-300"
                   >
                     <FontAwesomeIcon
@@ -68,7 +107,7 @@ const PortalLayout = ({ children }: PortalLayoutProps)=> {
                 </li>
                 <li>
                   <Link
-                    to="javascript:void(0)"
+                    to="/Clients"
                     className="menu-item text-slate-800 text-[15px] font-medium flex items-center cursor-pointer hover:bg-[#d9f3ea] rounded-md px-3 py-3 transition-all duration-300"
                   >
                     <FontAwesomeIcon
@@ -80,7 +119,7 @@ const PortalLayout = ({ children }: PortalLayoutProps)=> {
                 </li>
                 <li>
                   <Link
-                    to="javascript:void(0)"
+                    to="/FacturaVenta"
                     className="menu-item text-slate-800 text-[15px] font-medium flex items-center cursor-pointer hover:bg-[#d9f3ea] rounded-md px-3 py-3 transition-all duration-300"
                   >
                     <FontAwesomeIcon
@@ -92,7 +131,7 @@ const PortalLayout = ({ children }: PortalLayoutProps)=> {
                 </li>
                 <li>
                   <Link
-                    to="javascript:void(0)"
+                    to="/FacturaProveedor"
                     className="menu-item text-slate-800 text-[15px] font-medium flex items-center cursor-pointer hover:bg-[#d9f3ea] rounded-md px-3 py-3 transition-all duration-300"
                   >
                     <FontAwesomeIcon
@@ -102,7 +141,8 @@ const PortalLayout = ({ children }: PortalLayoutProps)=> {
                     <span>Factura Proveedor</span>
                   </Link>
                 </li>
-              </ul>
+              </ul> */}
+              <Sidebar />
             </div>
             <div className="mt-auto p-6 border-t border-gray-200">
               <div className="flex items-center justify-between">
@@ -121,16 +161,16 @@ const PortalLayout = ({ children }: PortalLayoutProps)=> {
                     </p>
                   </div>
                 </div>
-                 <Tooltip content="Cerrar sesión" side="top">
-                <button
-                  // onClick={onSignOut}
-                  className="text-slate-500 hover:text-red-600 transition-colors duration-300 ml-3 cursor-pointer"
-                >
-                  <FontAwesomeIcon
-                    icon={faRightFromBracket}
-                    className="w-5 h-5"
-                  />
-                </button>
+                <Tooltip content="Cerrar sesión" side="top">
+                  <button
+                    onClick={handleSignout}
+                    className="text-slate-500 hover:text-red-600 transition-colors duration-300 ml-3 cursor-pointer"
+                  >
+                    <FontAwesomeIcon
+                      icon={faRightFromBracket}
+                      className="w-5 h-5"
+                    />
+                  </button>
                 </Tooltip>
               </div>
             </div>
@@ -156,25 +196,11 @@ const PortalLayout = ({ children }: PortalLayoutProps)=> {
         </button>
 
         <section className="main-content w-full p-6 max-lg:ml-8">
-          <div>
-            <div className="flex items-center flex-wrap gap-6">
-              <div>
-                <h3 className="text-lg font-bold text-slate-800 ">
-                  Bienvenido! {name}
-                </h3>
-                <p className="text-xs text-text-800">
-                  Streamlined dashboard layout featuring a welcoming header for
-                  user personalization.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-12 mb-6 px-2">{children}</div>
+            <Outlet />
         </section>
       </div>
     </div>
   );
-}
+};
 
 export default PortalLayout;

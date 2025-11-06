@@ -4,7 +4,7 @@ import { toast } from "react-hot-toast";
 
 const axiosClient = axios.create({
   baseURL: API_URL,
-  withCredentials: true, // si estás usando cookies en el backend
+  withCredentials: true,
 });
 
 axiosClient.interceptors.response.use(
