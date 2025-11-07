@@ -1,5 +1,5 @@
 import { useState } from "react";
-import MainLayout from "../layout/Main-layout";
+import MainLayout from "../layout/main-layout";
 import { useAuth } from "../auth/AuthProvider";
 import { Navigate, useNavigate } from "react-router-dom";
 import { API_URL } from "../auth/consts";

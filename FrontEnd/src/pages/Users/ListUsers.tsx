@@ -1,4 +1,29 @@
+import { useEffect, useState } from "react";
+import { useAuth } from "../../auth/AuthProvider";
+import axios from "axios";
+import { API_URL } from "../../auth/consts";
+
 const ListUsers =() =>{
+  const auth = useAuth();
+  const [userList,setUserList]= useState<[]>([])
+
+  useEffect(()=>{
+    handleListUSer();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[])
+  const handleListUSer= async ()=>{
+    try {
+      const response = await axios.get(`${API_URL}/selectUser`, {
+        headers: { Authorization: `Bearer ${auth.getAccessToken()}` },
+      });
+      if (response.status === 200) {
+        setUserList(response.data.body)
+      }
+
+    } catch (e) {
+      console.error("error al Traer la info del usuario.", e);
+    }
+  }
   return (
                   <table className="min-w-full bg-white">
                 <thead className="bg-gray-800 whitespace-nowrap">

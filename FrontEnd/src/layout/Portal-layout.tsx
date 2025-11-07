@@ -18,7 +18,7 @@ const PortalLayout = () => {
   const name = auth.getUser()?.name;
   const lastName = auth.getUser()?.lastname;
   const completeName = name && lastName ? `${name} ${lastName}` : "Error Name";
-  const role = auth.getUser()?.cargo;
+  const role = auth.getUser()?.role;
   const abreviateName =
     name && lastName
       ? `${name.charAt(0)}${lastName.charAt(0)}`.toUpperCase()

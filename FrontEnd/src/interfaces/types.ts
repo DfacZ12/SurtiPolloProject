@@ -17,7 +17,8 @@ export interface User{
   username: string;
   name: string;
   lastname: string;
-  cargo: string;
+  role: string;
+  rolId: number
 }
 
 export interface AccesTokenResponse{
