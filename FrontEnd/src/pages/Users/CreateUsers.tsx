@@ -1,196 +1,252 @@
+import { useState } from "react";
+import { faUser, faWandMagicSparkles } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Tooltip from "../../shared/Tooltip";
+
 const CreateUsers = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    lname: "",
+    cedula: "",
+    email: "",
+    number: "",
+    phone: "",
+    eps: "",
+    cargo: "",
+    username: "",
+  });
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const requiredFields = ["name", "lname", "cedula", "number" ,"email", "eps", "cargo", "username"];
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: "" })); // limpiar error cuando el usuario escribe
+  };
+
+  const generateUsernameSuggestion = () => {
+    const base = `${formData.name.toLowerCase()}${formData.lname.toLowerCase().charAt(0)}`;
+    if(!base)return
+    const randomNum = Math.floor(Math.random() * 900 + 100); // número aleatorio entre 100–999
+    const username = `${base}${randomNum}`.replace(/ /g, "");
+    console.log(username)
+    setFormData((prev) => ({ ...prev, username }));
+  };
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+    requiredFields.forEach((field) => {
+      if (!formData[field as keyof typeof formData]) {
+        newErrors[field] = "Campo obligatorio";
+      }
+    });
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+    console.log("Datos listos para enviar:", formData);
+    // Aquí iría tu llamada al backend (axios.post...)
+  };
+
+  const inputClass = (name: string) =>
+    `bg-slate-100 focus:bg-transparent w-full text-sm text-slate-900 px-4 py-2.5 rounded-sm border transition-all outline-0 ${
+      errors[name] ? "border-red-500 focus:border-red-500" : "border-gray-200 focus:border-blue-600"
+    }`;
+
   return (
-      <div className="flex items-center justify-center">
-        <div className="w-full border p-8 rounded-xl">
-          <form>
-            <div className="mb-4">
-              <label
-                htmlFor="inptCC"
-                className="mb-3 block text-base font-medium text-[#07074D]"
-              >
-                Número de Cédula
-              </label>
-              <input
-                type="text"
-                inputMode="numeric"
-                maxLength={11}
-                name="cedula"
-                onInput={(e) =>
-                  (e.currentTarget.value = e.currentTarget.value.replace(
-                    /\D/g,
-                    ""
-                  ))
-                }
-                id="inptCC"
-                placeholder="Cédula"
-                className="w-[350px] xl:w-[550px] rounded-md border border-[#e0e0e0] bg-white py-2 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
-              />
-            </div>
-            <div className="-mx-3 flex flex-wrap">
-              <div className="w-full px-3 sm:w-1/2">
-                <div className="mb-4">
-                  <label
-                    htmlFor="name"
-                    className="mb-3 block text-base font-medium text-[#07074D]"
-                  >
-                    Nombre
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    id="name"
-                    placeholder="Full Name"
-                    className="w-full rounded-md border border-[#e0e0e0] bg-white py-2 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
-                  />
-                </div>
-              </div>
-              <div className="w-full px-3 sm:w-1/2">
-                <div className="mb-4">
-                  <label
-                    htmlFor="phone"
-                    className="mb-3 block text-base font-medium text-[#07074D]"
-                  >
-                    Apellido
-                  </label>
-                  <input
-                    type="text"
-                    name="phone"
-                    id="phone"
-                    placeholder="Enter your phone number"
-                    className="w-full rounded-md border border-[#e0e0e0] bg-white py-2 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="mb-4">
-              <label
-                htmlFor="email"
-                className="mb-3 block text-base font-medium text-[#07074D]"
-              >
-                Dirección de correo electrónico
-              </label>
-              <input
-                type="email"
-                name="email"
-                id="email"
-                placeholder="Enter your email"
-                className="w-[420px] rounded-md border border-[#e0e0e0] bg-white py-2 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
-              />
-            </div>
-            <div className="-mx-3 flex flex-wrap">
-              <div className="w-full px-3 sm:w-1/2">
-                <div className="mb-4">
-                  <label
-                    htmlFor="inptPhone"
-                    className="mb-3 block text-base font-medium text-[#07074D]"
-                  >
-                    Telefono Fijo
-                  </label>
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    maxLength={8}
-                    onInput={(e) =>
-                      (e.currentTarget.value = e.currentTarget.value.replace(
-                        /\D/g,
-                        ""
-                      ))
-                    }
-                    name="phone"
-                    id="inptPhone"
-                    placeholder="****"
-                    className="w-[350px] rounded-md border border-[#e0e0e0] bg-white py-2 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
-                  />
-                </div>
-              </div>
-              <div className="w-full px-3 sm:w-1/2">
-                <div className="mb-4">
-                  <label
-                    htmlFor="inptCel"
-                    className="mb-3 block text-base font-medium text-[#07074D]"
-                  >
-                    Celular
-                  </label>
-                  <input
-                    name="celphone"
-                    id="inptCel"
-                    maxLength={10}
-                    onInput={(e) =>
-                      (e.currentTarget.value = e.currentTarget.value.replace(
-                        /\D/g,
-                        ""
-                      ))
-                    }
-                    placeholder="321 XXXXXXX"
-                    className="w-[350px] rounded-md border border-[#e0e0e0] bg-white py-2 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="-mx-3 flex flex-wrap">
-              <div className="w-full px-3 sm:w-1/2">
-                <div className="mb-4">
-                  <label
-                    htmlFor="inptEps"
-                    className="mb-3 block text-base font-medium text-[#07074D]"
-                  >
-                    EPS
-                  </label>
-                  <select
-                    name="eps"
-                    id="inptEps"
-                    className="w-[350px] xl:w-full rounded-md border border-[#e0e0e0] bg-white py-2 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
-                  >
-                    <option value="" selected>
-                      Seleccione una Opción
-                    </option>
-                    <option value="Sanitas">Sanitas</option>
-                  </select>
-                </div>
-              </div>
-              <div className="w-full px-3 sm:w-1/2">
-                <div className="mb-4">
-                  <label
-                    htmlFor="date"
-                    className="mb-3 block text-base font-medium text-[#07074D]"
-                  >
-                    Cargo
-                  </label>
-                  <select
-                    name="date"
-                    id="date"
-                    className="w-[250px] lg:w-full rounded-md border border-[#e0e0e0] bg-white py-2 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
-                  >
-                    <option value="" selected>
-                      Seleccione una Opción
-                    </option>
-                    <option value="Sanitas">Admin</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <div className="mb-4">
-              <label
-                htmlFor="inptUsername"
-                className="mb-3 block text-base font-medium text-[#07074D]"
-              >
-                Nombre de usuario
-              </label>
-              <input
-                name="usermame"
-                id="inptUsername"
-                placeholder="@@@@@"
-                className="w-[350px] xl:w-[500px] rounded-md border border-[#e0e0e0] bg-white py-2 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
-              />
-            </div>
-            <div>
-              <button className="hover:shadow-form w-full rounded-md bg-[#d9f3ea] py-2 px-8 text-center text-base font-semibold text-black outline-none cursor-pointer">
-                Registrar
-              </button>
-            </div>
-          </form>
+    <form
+      onSubmit={handleSubmit}
+      className="mx-auto bg-white [box-shadow:0_2px_13px_-6px_rgba(0,0,0,0.4)] xl:p-8 p-4 rounded-md"
+    >
+      <div className="grid md:grid-cols-2 gap-3">
+        {/* Nombre */}
+        <div>
+          <label htmlFor="inptName" className="text-slate-900 text-sm font-medium mb-2 block">
+            Nombre *
+          </label>
+          <input
+            id="inptName"
+            name="name"
+            type="text"
+            value={formData.name}
+            onChange={handleChange}
+            className={inputClass("name")}
+            placeholder="Ingresa el nombre"
+          />
+          {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
+        </div>
+
+        {/* Apellido */}
+        <div>
+          <label htmlFor="inptLastName" className="text-slate-900 text-sm font-medium mb-2 block">
+            Apellido *
+          </label>
+          <input
+            id="inptLastName"
+            name="lname"
+            type="text"
+            value={formData.lname}
+            onChange={handleChange}
+            className={inputClass("lname")}
+            placeholder="Ingresa el apellido"
+          />
+          {errors.lname && <p className="text-red-500 text-xs mt-1">{errors.lname}</p>}
+        </div>
+
+        {/* Cédula */}
+        <div>
+          <label htmlFor="inptCC" className="text-slate-900 text-sm font-medium mb-2 block">
+            Cédula *
+          </label>
+          <input
+            id="inptCC"
+            name="cedula"
+            inputMode="numeric"
+            maxLength={11}
+            value={formData.cedula}
+            onInput={(e) => (e.currentTarget.value = e.currentTarget.value.replace(/\D/g, ""))}
+            onChange={handleChange}
+            className={inputClass("cedula")}
+            placeholder="Ingresa número de cédula"
+          />
+          {errors.cedula && <p className="text-red-500 text-xs mt-1">{errors.cedula}</p>}
+        </div>
+
+        {/* Email */}
+        <div>
+          <label htmlFor="inptEmail" className="text-slate-900 text-sm font-medium mb-2 block">
+            Correo electrónico *
+          </label>
+          <input
+            id="inptEmail"
+            name="email"
+            type="email"
+            value={formData.email}
+            onChange={handleChange}
+            className={inputClass("email")}
+            placeholder="nombre@ejemplo.com"
+          />
+          {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+        </div>
+
+        {/* Celular */}
+        <div>
+          <label htmlFor="inptCel" className="text-slate-900 text-sm font-medium mb-2 block">
+            Celular
+          </label>
+          <input
+            id="inptCel"
+            name="number"
+            type="number"
+            value={formData.number}
+            onChange={handleChange}
+            className={inputClass("number")}
+            placeholder="321 XXXXXXX"
+          />
+            {errors.number && <p className="text-red-500 text-xs mt-1">{errors.number}</p>}
+        </div>
+
+        {/* Teléfono fijo */}
+        <div>
+          <label htmlFor="inptPhone" className="text-slate-900 text-sm font-medium mb-2 block">
+            Teléfono fijo
+          </label>
+          <input
+            id="inptPhone"
+            name="phone"
+            inputMode="numeric"
+            maxLength={8}
+            value={formData.phone}
+            onInput={(e) => (e.currentTarget.value = e.currentTarget.value.replace(/\D/g, ""))}
+            onChange={handleChange}
+            className={inputClass("phone")}
+            placeholder="#######"
+          />
+        </div>
+
+        {/* EPS */}
+        <div>
+          <label htmlFor="slcEps" className="text-slate-900 text-sm font-medium mb-2 block">
+            EPS *
+          </label>
+          <select
+            id="slcEps"
+            name="eps"
+            value={formData.eps}
+            onChange={handleChange}
+            className={inputClass("eps")}
+          >
+            <option value="">Seleccione una opción...</option>
+            <option value="1">Sanitas</option>
+            <option value="2">Sura</option>
+          </select>
+          {errors.eps && <p className="text-red-500 text-xs mt-1">{errors.eps}</p>}
+        </div>
+
+        {/* Cargo */}
+        <div>
+          <label htmlFor="slcCargo" className="text-slate-900 text-sm font-medium mb-2 block">
+            Cargo *
+          </label>
+          <select
+            id="slcCargo"
+            name="cargo"
+            value={formData.cargo}
+            onChange={handleChange}
+            className={inputClass("cargo")}
+          >
+            <option value="">Seleccione un cargo...</option>
+            <option value="1">Administrador</option>
+            <option value="2">Cajero</option>
+          </select>
+          {errors.cargo && <p className="text-red-500 text-xs mt-1">{errors.cargo}</p>}
+        </div>
+
+        {/* Username + sugerencia */}
+        <div className="relative">
+          <label htmlFor="inptUsername" className="text-slate-900 text-sm font-medium mb-2 block">
+            Nombre de usuario *
+          </label>
+          <div className="flex items-center">
+            <input
+              id="inptUsername"
+              name="username"
+              type="text"
+              value={formData.username}
+              onChange={handleChange}
+              className={`${inputClass("username")} flex-1`}
+              placeholder="usuario..."
+              disabled
+            />
+            <Tooltip content="Generar nombre de Usuario" side="top">
+            <button
+              type="button"
+              onClick={generateUsernameSuggestion}
+              className="ml-2 bg-indigo-500 hover:bg-indigo-600 text-white px-3 py-2 rounded-sm text-sm font-medium cursor-pointer"
+            >
+              <FontAwesomeIcon icon={faWandMagicSparkles} />
+            </button>
+            </Tooltip>
+          </div>
+          {errors.username && <p className="text-red-500 text-xs mt-1">{errors.username}</p>}
         </div>
       </div>
+
+      <div className="mt-8">
+        <button
+          type="submit"
+          className="w-full py-2.5 px-5 text-sm font-medium tracking-wider rounded-sm cursor-pointer text-white bg-blue-600 hover:bg-blue-700 focus:outline-0"
+        >
+          Crear Usuario
+          <FontAwesomeIcon className="ml-2" icon={faUser} />
+        </button>
+      </div>
+    </form>
   );
 };
 
