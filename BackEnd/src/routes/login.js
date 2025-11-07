@@ -14,7 +14,7 @@ export default routerLogin.post('/', async (req, res,next) => {
         const db = await connectDB();
 
         const [user] = await db.execute(
-        `SELECT a.Cedula,a.username,a.password,a.Nombre,a.Apellido,b.NombreCargo Cargo
+        `SELECT a.Cedula,a.username,a.password,a.Nombre,a.Apellido,b.NombreCargo Cargo,a.cargo CargoId
           FROM USUARIO a join CARGO b ON a.Cargo=b.ID WHERE username = ?`, [username]
         );
 
@@ -30,7 +30,8 @@ export default routerLogin.post('/', async (req, res,next) => {
         const refreshToken = genToken.generateRefreshToken(infoUser);
         try{
             await db.execute('UPDATE USUARIO SET refresh_token = ? WHERE Cedula = ?', [refreshToken, infoUser.cc]);
-        }catch{
+        }catch(error){
+          console.log(error)
           return res.status(500).json(jsonResponse(500,{ error: 'Ha ocurrido un error inesperado, intente de nuevo más tarde.'}))//si hay un error al guardar el refresh token
         }
         return res.status(201).json(jsonResponse(201, {infoUser, accessToken, refreshToken }))//envia el token al cliente

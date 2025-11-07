@@ -25,7 +25,8 @@ router.post("/", async (req, res, next) => {
 
     const db = await connectDB();
     const [userRows] = await db.execute(
-      "SELECT * FROM USUARIO WHERE refresh_token = ?",
+      `SELECT a.Cedula,a.username,a.password,a.Nombre,a.Apellido,b.NombreCargo Cargo,a.cargo CargoId
+          FROM USUARIO a join CARGO b ON a.Cargo=b.ID WHERE refresh_token = ?`,
       [refreshToken]
     );
 

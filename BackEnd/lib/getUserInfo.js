@@ -5,6 +5,7 @@ const getUserInfo = (ifUs) => {
         name: ifUs.Nombre,
         lastname: ifUs.Apellido,
         role: ifUs.Cargo,
+        rolId: ifUs.CargoId
     }
 }
 
