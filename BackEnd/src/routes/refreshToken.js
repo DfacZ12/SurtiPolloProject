@@ -19,13 +19,12 @@ router.post("/", async (req, res, next) => {
     //Verificar firma/expiración del refresh token
     const decoded = verifyTokens.verifyRefreshToken(refreshToken);
     if (!decoded) {
-      console.log(decoded)
       return res.status(403).json(jsonResponse(403, { error: "Invalid or expired refresh token" }));
     }
 
     const db = await connectDB();
     const [userRows] = await db.execute(
-      `SELECT a.Cedula,a.username,a.password,a.Nombre,a.Apellido,b.NombreCargo Cargo,a.cargo CargoId
+      `SELECT a.Cedula,a.username,a.Nombre,a.Apellido,b.NombreCargo Cargo,a.cargo CargoId
           FROM USUARIO a join CARGO b ON a.Cargo=b.ID WHERE refresh_token = ?`,
       [refreshToken]
     );

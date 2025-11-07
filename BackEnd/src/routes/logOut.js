@@ -16,7 +16,7 @@ routerLogOut.post("/", async (req, res) => {
     // Elimina o invalida el refresh token del usuario
     await db.execute("UPDATE USUARIO SET refresh_token = NULL WHERE refresh_token = ?", [refreshToken]);
 
-    return res.status(200).json({ message: "Sesión cerrada correctamente" });
+    return res.status(201).json({ message: "Sesión cerrada correctamente" });
   } catch (error) {
     console.error("Error al cerrar sesión:", error);
     return res.status(500).json({ error: "Error interno del servidor" });

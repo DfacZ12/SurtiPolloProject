@@ -22,13 +22,38 @@ const sign = (payload, isAccessToken) => {
   );
 };
 
-const generateAccessToken = (data) => {
-  return sign({ data }, true);
+const generateAccessToken = (user) => {
+  const minimalUserData = {
+    name:user.name,
+    lastname: user.lastname,
+    username: user.username,
+    role: user.role,
+    rolId: user.rolId,
+  };
+  console.log(minimalUserData)
+  return sign({ data: minimalUserData }, true);
 };
 
-const generateRefreshToken = (data) => {
-  return sign({ data }, false);
+const generateRefreshToken = (user) => {
+  const minimalUserData = {
+    name:user.name,
+    lastname: user.lastname,
+    username: user.username,
+    role: user.role,
+    rolId: user.rolId,
+  };
+  console.log(minimalUserData)
+  return sign({ data: minimalUserData }, false);
 };
+
+
+// const generateAccessToken = (data) => {
+//   return sign({ data }, true);
+// };
+
+// const generateRefreshToken = (data) => {
+//   return sign({ data }, false);
+// };
 
 export default {
   generateAccessToken,
