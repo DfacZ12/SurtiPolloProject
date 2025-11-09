@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useAuth } from "../auth/AuthProvider";
-import {Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import Tooltip from "../shared/Tooltip";
 import axios from "axios";
 import { API_URL } from "../auth/consts";
@@ -23,6 +23,9 @@ const PortalLayout = () => {
   const lastName = auth.getUser()?.lastname;
   const completeName = name && lastName ? `${name} ${lastName}` : "Error Name";
   const role = auth.getUser()?.role;
+
+
+
   const abreviateName =
     name && lastName
       ? `${name.charAt(0)}${lastName.charAt(0)}`.toUpperCase()
@@ -77,8 +80,7 @@ const PortalLayout = () => {
         <nav id="sidebar" className="lg:min-w-[270px] w-max max-lg:min-w-8">
           <div
             id="sidebar-collapse-menu"
-            className={`fixed top-0 left-0 h-screen bg-white shadow-lg overflow-auto transition-all duration-500 z-50 ${
-            openSidebar ? "w-[270px] visible opacity-100" : "w-0 invisible opacity-0"} lg:w-[270px] lg:visible lg:opacity-100`}
+            className={`fixed top-0 left-0 h-screen bg-white shadow-lg overflow-auto transition-all duration-500 z-50 ${openSidebar ? "w-[270px] visible opacity-100" : "w-0 invisible opacity-0"} lg:w-[270px] lg:visible lg:opacity-100`}
           >
             <div className="flex items-center justify-between pt-8 pb-2 px-6 sticky top-0 bg-white min-h-[80px] z-[100]">
               <img
@@ -88,9 +90,9 @@ const PortalLayout = () => {
               />
               <button onClick={toggleSidebar} className="lg:hidden cursor-pointer">
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 fill-gray-300" viewBox="0 0 20 20">
-                <path
-                  fillRule="evenodd"
-                  d="M.13 17.05a1.41 1.41 0 0 1 1.41-1.41H10a1.41 1.41 0 1 1 0 2.82H1.54a1.41 1.41 0 0 1-1.41-1.41zM.13 2.95a1.41 1.41 0 0 1 1.41-1.41h16.92a1.41 1.41 0 1 1 0 2.82H1.54A1.41 1.41 0 0 1 .13 2.95zM.13 10a1.41 1.41 0 0 1 1.41-1.41h16.92a1.41 1.41 0 1 1 0 2.82H1.54A1.41 1.41 0 0 1 .13 10z"
+                  <path
+                    fillRule="evenodd"
+                    d="M.13 17.05a1.41 1.41 0 0 1 1.41-1.41H10a1.41 1.41 0 1 1 0 2.82H1.54a1.41 1.41 0 0 1-1.41-1.41zM.13 2.95a1.41 1.41 0 0 1 1.41-1.41h16.92a1.41 1.41 0 1 1 0 2.82H1.54A1.41 1.41 0 0 1 .13 2.95zM.13 10a1.41 1.41 0 0 1 1.41-1.41h16.92a1.41 1.41 0 1 1 0 2.82H1.54A1.41 1.41 0 0 1 .13 10z"
                   />
                 </svg>
               </button>
@@ -162,10 +164,10 @@ const PortalLayout = () => {
 
         <section className="main-content w-full p-6 max-lg:ml-8">
           <h1 className="text-3xl font-bold mb-12">
-                {gestIconTitle && (
-                  <FontAwesomeIcon icon={gestIconTitle} className="w-[18px] h-[18px] mr-2" />
-                )}
-              {gestTitle}
+            {gestIconTitle && (
+              <FontAwesomeIcon icon={gestIconTitle} className="w-[18px] h-[18px] mr-2" />
+            )}
+            {gestTitle}
           </h1>
           <Outlet />
         </section>
