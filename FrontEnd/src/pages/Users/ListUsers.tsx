@@ -26,7 +26,7 @@ const ListUsers = () => {
   };
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-     <table className="w-full text-sm text-left rtl:text-right text-gray-500 ">
+     <table className="xl:w-full lg:w-[250px] text-sm text-left rtl:text-right text-gray-500 ">
       <thead className="bg-gray-800 whitespace-nowrap">
         <tr>
           <th className="p-4 text-left text-sm font-medium text-white">Cedula</th>

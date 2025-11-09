@@ -142,7 +142,9 @@ const CreateUsers = () => {
           <input
             id="inptCel"
             name="number"
-            type="number"
+            type="text"
+            maxLength={10}
+            onInput={(e) => (e.currentTarget.value = e.currentTarget.value.replace(/\D/g, ""))}
             value={formData.number}
             onChange={handleChange}
             className={inputClass("number")}

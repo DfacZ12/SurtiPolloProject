@@ -31,7 +31,7 @@ const PortalLayout = () => {
   const handleLogOut = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     try {
-      const response = await axios.delete(`${API_URL}/logOut`, {
+      const response = await axios.post(`${API_URL}/logOut`,{}, {
         headers: { Authorization: `Bearer ${auth.getRefreshToken()}` },
       });
       if (response.status === 201) {
