@@ -12,9 +12,10 @@ import refreshTokenRouter from './routes/refreshToken.js';
 /**
  * APIS
  */
-import selectUSerRouter from './apis/user/selectUser.js'
 import epsRouter from './apis/eps/selectEps.js'
 import RoleRouter from './apis/rol/selectRole.js'
+import selectUserRouter from './apis/user/selectUser.js'
+import createUserRouter from './apis/user/createUser.js'
 
 
 const app = express();
@@ -33,9 +34,12 @@ app.use('/api/login', loginRouter);
 app.use('/api/refreshToken', refreshTokenRouter);
 app.use('/api/userInfoToken', authenticate, userRouter);
 app.use('/api/logOut',logOutRouter);//! Pendiente Por realizar endpoint de logOut
-app.use('/api/selectUser',authenticate, selectUSerRouter)//!Hace falta poner el middleware de auth
 app.use('/api/selectEps',epsRouter)
 app.use('/api/selectRoles',RoleRouter)
+
+//!usuarios
+app.use('/api/selectUser',authenticate, selectUserRouter)
+app.use('/api/createUser', createUserRouter)
 
 app.use(errorHandler);
 
