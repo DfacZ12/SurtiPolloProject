@@ -19,7 +19,7 @@ export default routerSelectRoles.get('/', async (req,res)=>{
 
     res.status(200).json(jsonResponse(200, info));
   } catch (error) {
-    console.log("Error al obtener eps:", error);
+    console.log("Error al obtener rol:", error);
     res.status(500).json({ message: "Error interno del servidor" });
   }
 })

@@ -40,6 +40,7 @@ CREATE TABLE USUARIO (
   Cargo TINYINT NOT NULL,
   Estado BIT NOT NULL,
   refresh_token varchar(700),
+  firstLogin bit,
   fecha_creacion date default (current_date()),
   CONSTRAINT fk_usuario_eps FOREIGN KEY (EPS) REFERENCES EPS(COD_EPS),
   CONSTRAINT fk_usuario_registra FOREIGN KEY (Registrado_Por) REFERENCES USUARIO(Cedula),
@@ -210,8 +211,8 @@ SELECT * FROM PRODUCTO;
 SELECT * FROM EPS;
 
 alter table USUARIO
-add column fecha_creacion date default (current_date());
+add column firstLogin bit;
 
+select cedula from usuario where username='danielfacunam';
 
-SELECT a.cedula,a.username,a.nombre,a.apellido,b.NombreCargo Cargo FROM
-USUARIO a join CARGO b ON a.Cargo=b.ID
+update usuario set cargo=3 where Cedula='78787844884';

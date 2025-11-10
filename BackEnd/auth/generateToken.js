@@ -30,7 +30,6 @@ const generateAccessToken = (user) => {
     role: user.role,
     rolId: user.rolId,
   };
-  console.log(minimalUserData)
   return sign({ data: minimalUserData }, true);
 };
 
@@ -42,7 +41,6 @@ const generateRefreshToken = (user) => {
     role: user.role,
     rolId: user.rolId,
   };
-  console.log(minimalUserData)
   return sign({ data: minimalUserData }, false);
 };
 
