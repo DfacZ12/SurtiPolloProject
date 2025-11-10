@@ -2,8 +2,10 @@ import { useState } from "react";
 import { faUser, faWandMagicSparkles } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Tooltip from "../../shared/Tooltip";
+import { useAuth } from "../../auth/AuthProvider";
 
 const CreateUsers = () => {
+  const authUser = useAuth().getUser()?.username;
   const [formData, setFormData] = useState({
     name: "",
     lname: "",
@@ -14,6 +16,7 @@ const CreateUsers = () => {
     eps: "",
     cargo: "",
     username: "",
+    registered_by: authUser
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});

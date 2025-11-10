@@ -162,7 +162,7 @@ const PortalLayout = () => {
           </svg>
         </button>
 
-        <section className="main-content w-full p-6 max-lg:ml-8">
+        <section className="main-content w-full p-6 overflow-auto">
           <h1 className="text-3xl font-bold mb-12">
             {gestIconTitle && (
               <FontAwesomeIcon icon={gestIconTitle} className="w-[18px] h-[18px] mr-2" />
