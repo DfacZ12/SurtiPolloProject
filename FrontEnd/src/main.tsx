@@ -130,7 +130,7 @@ const router = createBrowserRouter([
 ]);
 
 createRoot(document.getElementById("root") as HTMLElement).render(
-  <StrictMode>
+  // <StrictMode>
     <AuthProvider>
       <Toaster
         position="top-right"
@@ -139,5 +139,5 @@ createRoot(document.getElementById("root") as HTMLElement).render(
       />
       <RouterProvider router={router} />
     </AuthProvider>
-  </StrictMode>
+  // </StrictMode>
 );

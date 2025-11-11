@@ -4,17 +4,12 @@ import { API_URL } from "../../auth/Consts";
 import { useAuth } from "../../auth/AuthProvider";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import type { Ieps } from "../../interfaces/IEps";
-import type { Irole } from "../../interfaces/IRole";
-import toast from "react-hot-toast";
 import type { IUser } from "../../interfaces/IUsersList";
 import Swal from "sweetalert2";
 
 const UpdateProduct = ({ Id, onClose, onUpdated }: { Id: number, onClose: () => void, onUpdated: () => void }) => {
   const auth = useAuth();
   const [userInfo, setUserInfo] = useState<IUser[] | []>([]);
-  const [epsData, setEpsData] = useState<Ieps[]>([]);
-  const [rolData, setRolData] = useState<Irole[]>([]);
   const [formData, setFormData] = useState({
     name: "",
     lname: "",
@@ -40,58 +35,31 @@ const UpdateProduct = ({ Id, onClose, onUpdated }: { Id: number, onClose: () => 
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  useEffect(() => {
-    if (userInfo.length > 0) {
-      const u: IUser = userInfo[0];
-      setFormData({
-        name: u?.Nombre || "",
-        lname: u?.Apellido || "",
-        cc: u?.cedula?.toString() || "",
-        direccion: u?.Direccion || "",
-        email: u?.Correo || "",
-        number: u?.Celular || "",
-        phone: u?.Tel_Fijo?.toString() || "",
-        eps: epsData.find((e: Ieps) => e.Nombre === u.EPS)?.Id?.toString() || "",
-        cargo: rolData.find((r: Irole) => r.Nombre === u.cargo)?.Id?.toString() || "",
-      });
-    }
-  }, [userInfo, epsData, rolData]);
+  // useEffect(() => {
+  //   // if (userInfo.length > 0) {
+  //   //   const u: IUser = userInfo[0];
+  //   //   setFormData({
+  //   //     name: u?.Nombre || "",
+  //   //     lname: u?.Apellido || "",
+  //   //     cc: u?.cedula?.toString() || "",
+  //   //     direccion: u?.Direccion || "",
+  //   //     email: u?.Correo || "",
+  //   //     number: u?.Celular || "",
+  //   //     phone: u?.Tel_Fijo?.toString() || "",
+  //   //   });
+  //   // }
+  // }, []);
 
-  const handleSelectUser = async () => {
+  const handleSelectProduct = async () => {
     try {
-      const response = await axios.get(`${API_URL}/selectUser/${Id}`, {
+      const response = await axios.get(`${API_URL}/selectProduct/${Id}`, {
         headers: { Authorization: `Bearer ${auth.getAccessToken()}` },
       });
       if (response.status === 201) {
-        setUserInfo(response.data.body);
+        // setUserInfo(response.data.body);
       }
     } catch (e) {
       console.error("error al Traer la info del usuario.", e);
-    }
-  };
-  const getEps = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/selectEps`, {
-        headers: { Authorization: `Bearer ${auth.getAccessToken()}` },
-      });
-      if (response.status === 200) {
-        setEpsData(response.data.body);
-      }
-    } catch {
-      toast.error("error al Traer la info de las EPS.");
-    }
-  };
-
-  const getRoles = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/selectRoles`, {
-        headers: { Authorization: `Bearer ${auth.getAccessToken()}` },
-      });
-      if (response.status === 200) {
-        setRolData(response.data.body);
-      }
-    } catch {
-      toast.error("error al Traer la info de los cargos ");
     }
   };
   const handleChange = (
@@ -125,7 +93,7 @@ const UpdateProduct = ({ Id, onClose, onUpdated }: { Id: number, onClose: () => 
     if (!validateForm()) return;
     try {
       const response = await axios.put(
-        `${API_URL}/updateUser/${Id}`,
+        `${API_URL}/updateProduct/${Id}`,
         formData,
         { headers: { Authorization: `Bearer ${auth.getAccessToken()}` } }
       );
@@ -142,9 +110,7 @@ const UpdateProduct = ({ Id, onClose, onUpdated }: { Id: number, onClose: () => 
   };
 
   useEffect(() => {
-    handleSelectUser();
-    getEps();
-    getRoles();
+    handleSelectProduct();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
@@ -317,7 +283,7 @@ const UpdateProduct = ({ Id, onClose, onUpdated }: { Id: number, onClose: () => 
         </div>
 
         {/* EPS */}
-        <div>
+        {/* <div>
           <label
             htmlFor="slcEps"
             className="text-slate-900 text-sm font-medium mb-2 block"
@@ -341,10 +307,10 @@ const UpdateProduct = ({ Id, onClose, onUpdated }: { Id: number, onClose: () => 
           {errors.eps && (
             <p className="text-red-500 text-xs mt-1">{errors.eps}</p>
           )}
-        </div>
+        </div> */}
 
         {/* Cargo */}
-        <div>
+        {/* <div>
           <label
             htmlFor="slcCargo"
             className="text-slate-900 text-sm font-medium mb-2 block"
@@ -368,7 +334,7 @@ const UpdateProduct = ({ Id, onClose, onUpdated }: { Id: number, onClose: () => 
           {errors.cargo && (
             <p className="text-red-500 text-xs mt-1">{errors.cargo}</p>
           )}
-        </div>
+        </div> */}
       </div>
 
       <div className="mt-8">

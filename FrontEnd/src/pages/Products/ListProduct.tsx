@@ -14,10 +14,10 @@ const ListProducts = () => {
   const [selectedProduct, setSelectedProduct] = useState<number | null>(null);
 
   useEffect(() => {
-    handleListUSer();
+    handleListProduct();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const handleListUSer = async () => {
+  const handleListProduct = async () => {
     try {
       const response = await axios.get(`${API_URL}/listProducts`, {
         headers: { Authorization: `Bearer ${auth.getAccessToken()}` },
@@ -54,7 +54,7 @@ const ListProducts = () => {
         headers: { Authorization: `Bearer ${auth.getAccessToken()}` },
       });
       if (response.status === 201) {
-        handleListUSer();
+        handleListProduct();
         Swal.fire(response.data.body.message, "", "success");
       }
     } catch (e) {
@@ -123,12 +123,12 @@ const ListProducts = () => {
                 <td className="p-4 text-center text-sm text-black">
                   {user.Registrador_Por}
                 </td>
-                <td className="p-4 text-center text-sm text-black">{user.fecha_registro}</td>
-                <td className="p-4">
+                <td className="p-4 text-sm text-black">{user.fecha_registro}</td>
+                <td className="p-4 ">
                   <Tooltip content="Actualizar" side="top">
                     <button
                       onClick={() => setSelectedProduct(user.Id)}
-                      className="mr-4 cursor-pointer"
+                      className="mr-4 cursor-pointer text-center "
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -156,7 +156,7 @@ const ListProducts = () => {
                       <UpdateProduct
                         Id={selectedProduct}
                         onClose={() => setSelectedProduct(null)}
-                        onUpdated={() => handleListUSer()}
+                        onUpdated={() => handleListProduct()}
                       />
                     )}
                   </Modal>
