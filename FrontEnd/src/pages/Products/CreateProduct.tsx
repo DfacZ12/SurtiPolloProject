@@ -11,7 +11,7 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
-const CreateUsers = () => {
+const CreateProduct = () => {
   const auth = useAuth();
   const authUser = auth.getUser()?.username;
   const goTo = useNavigate();
@@ -343,4 +343,4 @@ const CreateUsers = () => {
   );
 };
 
-export default CreateUsers;
+export default CreateProduct;

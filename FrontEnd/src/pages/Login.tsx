@@ -1,8 +1,8 @@
 import { useState } from "react";
-import MainLayout from "../layout/main-layout";
+import MainLayout from "../layout/MainLayout";
 import { useAuth } from "../auth/AuthProvider";
 import { Navigate, useNavigate } from "react-router-dom";
-import { API_URL } from "../auth/consts";
+import { API_URL } from "../auth/Consts";
 import type { AuthResponse, AuthResponseError } from "../interfaces/types";
 import Alert from "../shared/Alert";
 import axios from "axios";

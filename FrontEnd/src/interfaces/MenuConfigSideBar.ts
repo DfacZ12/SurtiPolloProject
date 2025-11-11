@@ -14,6 +14,7 @@ export interface iMenuItem {
   icon: IconProp;
   path?: string;
   submenus?: iSubMenuItem[];
+  roles: string[]
 }
 export const menuItems: iMenuItem[] = [
   {
@@ -24,15 +25,17 @@ export const menuItems: iMenuItem[] = [
       { label: "Lista Usuarios",title:"Lista de Usuarios", path: "/Users/List" },
       { label: "Crear Usuario",title:"Creación de Usuarios", path: "/Users/Create" },
     ],
+    roles: ["Administrador"],
   },
   {
     id: "clientes",
-    label: "clientes",
+    label: "Clientes",
     icon: faUserTag,
     submenus: [
       { label: "Lista clientes", title:"Lista de Clientes",path: "/Clients/List" },
       { label: "Crear cliente", title:"Creación de Clientes",path: "/Clients/Create" },
     ],
+    roles: ["Administrador", "Cajero"],
   },
   {
     id: "productos",
@@ -42,6 +45,7 @@ export const menuItems: iMenuItem[] = [
       { label: "Lista Productos", title:"Lista de Productos",path: "/Products/List" },
       { label: "Nuevo Producto", title:"Creación de Productos",path: "/Products/Create" },
     ],
+    roles: ["Administrador", "Almacenista"],
   },
   {
     id: "facuturaVenta",
@@ -49,6 +53,7 @@ export const menuItems: iMenuItem[] = [
     title: "Factura de Venta",
     icon: faCartShopping,
     path: "/SalesInvoice",
+    roles: ["Administrador", "Cajero"],
   },
     {
     id: "facuturaProveedor",
@@ -56,5 +61,6 @@ export const menuItems: iMenuItem[] = [
     title: "Factura de Proveedor",
     icon: faDolly,
     path: "/SupplierInvoice",
+    roles:  ["Administrador", "Almacenista"],
   },
 ];

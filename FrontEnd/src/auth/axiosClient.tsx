@@ -1,5 +1,5 @@
 import axios from "axios";
-import { API_URL } from "./consts";
+import { API_URL } from "./Consts";
 import { toast } from "react-hot-toast";
 
 const axiosClient = axios.create({

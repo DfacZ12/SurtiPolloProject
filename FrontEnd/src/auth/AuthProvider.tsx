@@ -4,9 +4,9 @@ import type {
   AuthResponse,
   User,
 } from "../interfaces/types";
-import axiosClient from "./axiosClient";
+import axiosClient from "./AxiosClient";
 import { toast } from "react-hot-toast";
-import { API_URL } from "./consts";
+import { API_URL } from "./Consts";
 import { jwtDecode } from "jwt-decode";
 
 interface AuthProviderProps {

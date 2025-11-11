@@ -2,16 +2,16 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../auth/AuthProvider";
 import axios from "axios";
 import { API_URL } from "../../auth/Consts";
-import type { IUser } from "../../interfaces/IUsersList";
+import type { IProduct } from "../../interfaces/IProduct";
 import Tooltip from "../../shared/Tooltip";
-import UpdateUser from "./UpdateUser";
+import UpdateProduct from "./UpdateProduct";
 import Modal from "../../shared/Modal";
 import Swal from "sweetalert2";
 
-const ListUsers = () => {
+const ListProducts = () => {
   const auth = useAuth();
-  const [userList, setUserList] = useState<[]>([]);
-  const [selectedUser, setSelectedUser] = useState<number | null>(null);
+  const [userList, setProductList] = useState<[]>([]);
+  const [selectedProduct, setSelectedProduct] = useState<number | null>(null);
 
   useEffect(() => {
     handleListUSer();
@@ -19,21 +19,21 @@ const ListUsers = () => {
   }, []);
   const handleListUSer = async () => {
     try {
-      const response = await axios.get(`${API_URL}/listUsers`, {
+      const response = await axios.get(`${API_URL}/listProducts`, {
         headers: { Authorization: `Bearer ${auth.getAccessToken()}` },
       });
       if (response.status === 200) {
-        setUserList(response.data.body);
+        setProductList(response.data.body);
       }
     } catch (e) {
       console.error("error al Traer la info del usuario.", e);
     }
   };
 
-  const confirmDeleteUser = async (cedula: number) => {
+  const confirmDeleteProduct = async (Id: number) => {
     const result = await Swal.fire({
       icon: "question",
-      title: "Estas seguro que deseas eliminar el usuario?",
+      title: "Estas seguro que deseas eliminar el producto?",
       text: "Esta acción no se puede deshacer.",
       showDenyButton: true,
       showCancelButton: false,
@@ -41,16 +41,16 @@ const ListUsers = () => {
       denyButtonText: "No",
     });
     if (result.isConfirmed) {
-      await deleteUser(cedula);
+      await deleteProduct(Id);
     }
     if (result.isDenied) {
        Swal.fire("Operación cancelada", "", "info");
       }
   }
 
-  const deleteUser = async (cedula: number) => {
+  const deleteProduct = async (Id: number) => {
     try {
-      const response = await axios.put(`${API_URL}/deleteUser/${cedula}`, {},{
+      const response = await axios.put(`${API_URL}/deleteProduct/${Id}`, {},{
         headers: { Authorization: `Bearer ${auth.getAccessToken()}` },
       });
       if (response.status === 201) {
@@ -69,37 +69,25 @@ const ListUsers = () => {
         <thead className="bg-gray-800 whitespace-nowrap text-center">
           <tr>
             <th className="p-4 text-sm font-medium text-white">
-              Cedula
+              Id
             </th>
             <th className="p-4 text-sm font-medium text-white">
               Nombre
             </th>
             <th className="p-4 text-sm font-medium text-white">
-              Apellido
+              Precio Unitario
             </th>
             <th className="p-4 text-sm font-medium text-white">
-              Dirección
+              Cantidad
             </th>
             <th className="p-4 text-sm font-medium text-white">
-              EPS
+              Tiempo Refrigeracion
             </th>
             <th className="p-4 text-sm font-medium text-white">
-              Telefono Fijo
-            </th>
-            <th className="p-4 text-sm font-medium text-white">
-              Celular
-            </th>
-            <th className="p-4 text-sm font-medium text-white">
-              Correo
+              IVA
             </th>
             <th className="p-4 text-sm font-medium text-white">
               Registrador Por
-            </th>
-            <th className="p-4 text-sm font-medium text-white">
-              Nombre de Usuario
-            </th>
-            <th className="p-4 text-sm font-medium text-white">
-              Cargo
             </th>
             <th className="p-4 text-sm font-medium text-white">
               Fecha Creación
@@ -117,37 +105,29 @@ const ListUsers = () => {
                 colSpan={13}
                 className="text-center p-4 text-red-700 font-bold"
               >
-                No hay usuarios registrados.
+                No se encuentran Productos Registrados.
               </td>
             </tr>
           ) : (
-            userList.map((user: IUser, index) => (
+            userList.map((user: IProduct, index) => (
               <tr
                 key={index}
                 className="even:bg-blue-50 bg-white border-b border-gray-200"
               >
-                <td className="p-4 text-center text-sm text-black">{user.cedula}</td>
+                <td className="p-4 text-center text-sm text-black">{user.Id}</td>
                 <td className="p-4 text-center text-sm text-black">{user.Nombre}</td>
-                <td className="p-4 text-center text-sm text-black">{user.Apellido}</td>
-                <td className="p-4 text-center text-sm text-black">{user.Direccion}</td>
-                <td className="p-4 text-center text-sm text-black">{user.EPS}</td>
+                <td className="p-4 text-center text-sm text-black">{user.Precio_Unitario}</td>
+                <td className="p-4 text-center text-sm text-black">{user.cantidad}</td>
+                <td className="p-4 text-center text-sm text-black">{user.Tiempo_Refrigeracion}</td>
+                <td className="p-4 text-center text-sm text-black">{user.iva}</td>
                 <td className="p-4 text-center text-sm text-black">
-                  {user.Tel_Fijo ?? "N.A"}
-                </td>
-                <td className="p-4 text-center text-sm text-black">{user.Celular}</td>
-                <td className="p-4 text-center text-sm text-black">{user.Correo}</td>
-                <td className="p-4 text-center text-sm text-green-600">
                   {user.Registrador_Por}
                 </td>
-                <td className="p-4 text-center text-sm text-yellow-600">{user.username}</td>
-                <td className="p-4 text-center text-sm text-black">{user.cargo}</td>
-                <td className="p-4 text-center text-sm text-black">
-                  {new Date(user.fecha_creacion).toLocaleDateString()}
-                </td>
+                <td className="p-4 text-center text-sm text-black">{user.fecha_registro}</td>
                 <td className="p-4">
                   <Tooltip content="Actualizar" side="top">
                     <button
-                      onClick={() => setSelectedUser(user.cedula)}
+                      onClick={() => setSelectedProduct(user.Id)}
                       className="mr-4 cursor-pointer"
                     >
                       <svg
@@ -168,23 +148,22 @@ const ListUsers = () => {
                   </Tooltip>
                   {/* modal */}
                   <Modal
-                    show={!!selectedUser}
-                    onClose={() => setSelectedUser(null)}
+                    show={!!selectedProduct}
+                    onClose={() => setSelectedProduct(null)}
                     title="Actualizar usuario"
                   >
-                    {selectedUser && (
-                      <UpdateUser
-                        cedula={selectedUser}
-                        onClose={() => setSelectedUser(null)}
+                    {selectedProduct && (
+                      <UpdateProduct
+                        Id={selectedProduct}
+                        onClose={() => setSelectedProduct(null)}
                         onUpdated={() => handleListUSer()}
                       />
                     )}
                   </Modal>
-                  {user.username !== auth.getUser()?.username && (
                     <Tooltip content="Eliminar Usuario" side="top">
                   <button
                     className="mr-4 cursor-pointer"
-                    onClick={() => confirmDeleteUser(user.cedula)}
+                    onClick={() => confirmDeleteProduct(user.Id)}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -202,7 +181,6 @@ const ListUsers = () => {
                     </svg>
                   </button>
                   </Tooltip>
-                  )}
                 </td>
               </tr>
             ))
@@ -213,4 +191,4 @@ const ListUsers = () => {
   );
 };
 
-export default ListUsers;
+export default ListProducts;

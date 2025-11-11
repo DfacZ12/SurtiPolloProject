@@ -11,15 +11,18 @@ import { Toaster } from "react-hot-toast";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "./auth/AuthProvider";
 import Loader from "./shared/loader.tsx";
-import PortalLayout from "./layout/Portal-layout.tsx";
+import PortalLayout from "./layout/PortalLayout.tsx";
 import CreateUsers from "./pages/Users/CreateUsers.tsx";
 import ListUsers from "./pages/Users/ListUsers.tsx";
+import Unauthorized from "./pages/Unauthorized.tsx";
+import CreateProduct from "./pages/Products/CreateProduct.tsx";
+import ListProducts from "./pages/Products/ListProduct.tsx";
 
 const RootRedirect = () => {
   const { isAuth, isLoading } = useAuth();
   if (isLoading) return <Loader message="Verificando sesión..." />;
   // Si está autenticado, lo mandamos a Home
-  if (isAuth)return <Navigate to="/Home" replace />;
+  if (isAuth) return <Navigate to="/Home" replace />;
   // Si no está autenticado, mostramos Login
   return <Login />;
 };
@@ -28,6 +31,10 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <RootRedirect />,
+  },
+  {
+    path: "/unauthorized",
+    element: <Unauthorized />,
   },
   {
     path: "/",
@@ -41,68 +48,85 @@ const router = createBrowserRouter([
             element: <HomePage />,
           },
           {
-            path: "/Users",
-            children:[
+            element: <ProtectedRoute allowedRoles={["Administrador"]} />,
+            children: [
               {
-                index: true,
-                element: <Navigate to="/Users/List" replace />,
+                path: "/Users",
+                children: [
+                  {
+                    index: true,
+                    element: <Navigate to="/Users/List" replace />,
+                  },
+                  {
+                    path: "Create",
+                    element: <CreateUsers />,
+                  },
+                  {
+                    path: "List",
+                    element: <ListUsers />,
+                  },
+                ],
               },
-              {
-                path: "Create",
-                element: <CreateUsers />,
-              },
-              {
-                path: "List",
-                element: <ListUsers/>,
-              },
-            ]
+            ],
           },
           {
-            path: "/Products",
-            children:[
+            element: <ProtectedRoute allowedRoles={["Administrador", "Almacenista"]} />,
+            children: [
               {
-                index: true,
-                element: <Navigate to="/Products/List" replace />,
+                path: "/Products",
+                children: [
+                  {
+                    index: true,
+                    element: <Navigate to="/Products/List" replace />,
+                  },
+                  {
+                    path: "Create",
+                    element: <CreateProduct />,
+                  },
+                  {
+                    path: "List",
+                    element: <ListProducts/>
+                  },
+                ],
               },
-              {
-                path: "Create",
-                element: <CreateUsers />,
-              },
-              {
-                path: "List",
-                element: <div>🍗 Aquí iría tu página de lista de usuarios</div>,
-              },
-            ]
+            ],
           },
           {
-            path: "/Clients",
-            children:[
-              {
-                index: true,
-                element: <Navigate to="/Clients/List" replace />,
-              },
-              {
-                path: "Create",
-                element:<div>🍗 Aquí iría tu página de creación de usuarios</div>,
-              },
-              {
-                path: "List",
-                element: <div>🍗 Aquí iría tu página de lista de usuarios</div>,
-              },
-            ]
+            element: <ProtectedRoute allowedRoles={["Administrador", "Cajero"]} />,
+            children: [
+                {
+              path: "/Clients",
+              children: [
+                {
+                  index: true,
+                  element: <Navigate to="/Clients/List" replace />,
+                },
+                {
+                  path: "Create",
+                  element: (
+                    <div>🍗 Aquí iría tu página de creación de usuarios</div>
+                  ),
+                },
+                {
+                  path: "List",
+                  element: <div>🍗 Aquí iría tu página de lista de usuarios</div>,
+                },
+              ]
+              }
+            ],
           },
           {
             path: "/SalesInvoice",
-            element:""
+            element: "",
           },
           {
             path: "/SupplierInvoice",
-            element:""
-          }
+            element: "",
+          },
         ],
-      }
-    ]
-  }
+      },
+    ],
+  },
 ]);
 
 createRoot(document.getElementById("root") as HTMLElement).render(

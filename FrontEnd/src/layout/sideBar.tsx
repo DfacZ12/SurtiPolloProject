@@ -7,9 +7,10 @@ import type { IconProp } from "@fortawesome/fontawesome-svg-core";
 
 interface SidebarProps {
   onSelectMenu?: (title: string, icon: IconProp) => void;
+  userRole: string | undefined;
 }
 
-export default function Sidebar({onSelectMenu}:SidebarProps) {
+export default function Sidebar({onSelectMenu, userRole}:SidebarProps) {
   const location = useLocation();
   const [openMenu, setOpenMenu] = useState<string | null>(null);
 
@@ -21,9 +22,12 @@ export default function Sidebar({onSelectMenu}:SidebarProps) {
   const isAnySubmenuActive = (submenus?: iSubMenuItem[]) =>
     submenus?.some((submenu) => submenu.path === location.pathname);
 
+  const filteredMenus = menuItems.filter((menu) =>
+    menu.roles.includes(userRole ?? "")
+  );
   return (
     <ul id="sidebar" className="space-y-2">
-      {menuItems.map((menu) => {
+      {filteredMenus.map((menu) => {
         const hasSubmenus = !!menu.submenus?.length;
         const activeParent = isAnySubmenuActive(menu.submenus);
 
