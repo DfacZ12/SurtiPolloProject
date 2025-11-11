@@ -11,7 +11,7 @@ export default routerSelectRoles.get('/', async (req,res)=>{
    try {
 
     const [info] = await db.execute(
-    `SELECT ID,NombreCargo FROM CARGO ORDER BY NombreCargo DESC`
+    `SELECT Id,NombreCargo Nombre FROM CARGO ORDER BY NombreCargo`
     );
 
     if (info.length === 0)return res.status(404).json(jsonResponse(404, { error: 'No hay ningun Rol Registrado.' }));

@@ -5,30 +5,30 @@ import { authorizeRole } from "../../../auth/authRoles.js";
 
 const routerSelectUser = express.Router();
 
-routerSelectUser.get("/:cedula", authorizeRole([1]), async (req, res) => {
-  const cedula = req.params.cedula;
+routerSelectUser.get("/", authorizeRole([1]), async (req, res) => {
   try {
     const db = await connectDB();
     const [info] = await db.execute(`
       SELECT aa.cedula, aa.Nombre, aa.Apellido, aa.Direccion,
-             b.EPS_Nombre AS EPS, aa.Tel_Fijo, aa.Celular, aa.Correo, aa.username,
-             c.NombreCargo AS cargo
+             b.EPS_Nombre AS EPS, aa.Tel_Fijo, aa.Celular, aa.Correo,
+             a.username AS Registrador_Por, aa.username,
+             c.NombreCargo AS cargo, aa.fecha_creacion
       FROM USUARIO a
       JOIN USUARIO aa ON a.cedula = aa.Registrado_Por
       JOIN EPS b ON a.EPS = b.COD_EPS
       JOIN CARGO c ON aa.cargo = c.id
-      WHERE aa.cedula= ? AND aa.estado = true
+      WHERE aa.estado = true
       ORDER BY Nombre DESC
-    `,[cedula]);
+    `);
 
     if (info.length === 0) {
       return res
         .status(404)
         .json(
-          jsonResponse(404, { error: "No se encuentran la info del usuario" })
+          jsonResponse(404, { error: "No se encuentran usuarios registrados." })
         );
     }
-    res.status(201).json(jsonResponse(201, info));
+    res.status(200).json(jsonResponse(200, info));
   } catch (error) {
     console.log("Error al obtener usuarios:", error);
     res

@@ -9,7 +9,7 @@ export default routerSelectEps.get('/', async (req,res)=>{
    try {
 
     const [info] = await db.execute(
-    `SELECT COD_EPS,EPS_Nombre FROM EPS ORDER BY EPS_Nombre DESC`
+    `SELECT COD_EPS Id,EPS_Nombre Nombre FROM EPS ORDER BY EPS_Nombre`
     );
 
     if (info.length === 0)return res.status(404).json(jsonResponse(404, { error: 'No hay ninguna EPS registrada' }));

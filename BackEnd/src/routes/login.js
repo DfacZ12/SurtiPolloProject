@@ -15,7 +15,7 @@ export default routerLogin.post('/', async (req, res,next) => {
 
         const [user] = await db.execute(
         `SELECT a.Cedula,a.username,a.password,a.Nombre,a.Apellido,b.NombreCargo Cargo,a.cargo CargoId
-          FROM USUARIO a join CARGO b ON a.Cargo=b.ID WHERE username = ?`, [username]
+          FROM USUARIO a join CARGO b ON a.Cargo=b.ID WHERE username = ? and estado = true`, [username]
         );
 
         if (user.length === 0)return res.status(401).json(jsonResponse(401, { error: 'Usuario o Contraseña Incorrectos.' }));

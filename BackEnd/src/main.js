@@ -14,8 +14,12 @@ import refreshTokenRouter from './routes/refreshToken.js';
  */
 import epsRouter from './apis/eps/selectEps.js'
 import RoleRouter from './apis/rol/selectRole.js'
+
+import listUsersRouter from './apis/user/listUsers.js'
 import selectUserRouter from './apis/user/selectUser.js'
 import createUserRouter from './apis/user/createUser.js'
+import updateUserRouter from './apis/user/updateUser.js'
+import deleteUserRouter from './apis/user/deleteUser.js'
 
 
 const app = express();
@@ -33,13 +37,22 @@ app.use(express.json());
 app.use('/api/login', loginRouter);
 app.use('/api/refreshToken', refreshTokenRouter);
 app.use('/api/userInfoToken', authenticate, userRouter);
-app.use('/api/logOut',logOutRouter);//! Pendiente Por realizar endpoint de logOut
-app.use('/api/selectEps',epsRouter)
-app.use('/api/selectRoles',RoleRouter)
+app.use('/api/logOut',logOutRouter);
+
 
 //!usuarios
-app.use('/api/selectUser',authenticate, selectUserRouter)
-app.use('/api/createUser', createUserRouter)
+app.use('/api/listUsers',authenticate, listUsersRouter)
+app.use('/api/SelectUser',authenticate,selectUserRouter)
+app.use('/api/createUser', authenticate,createUserRouter)
+app.use('/api/updateUser', authenticate,updateUserRouter)
+app.use('/api/deleteUser', authenticate,deleteUserRouter)
+
+
+//! EPS
+app.use('/api/selectEps',authenticate,epsRouter)
+
+//! Rol
+app.use('/api/selectRoles',authenticate,RoleRouter)
 
 app.use(errorHandler);
 

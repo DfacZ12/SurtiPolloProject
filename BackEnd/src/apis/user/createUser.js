@@ -16,7 +16,7 @@ const generateRandomPassword = (length = 10) => {
   return password;
 };
 
-routerCreateUser.post("/", async (req, res) => {
+routerCreateUser.post("/", authorizeRole([1]),async (req, res) => {
   const { name, lname, cedula, direccion, email, number, phone, eps, cargo, username,registered_by } = req.body;
 
   if (!name || !lname || !cedula || !direccion || !email || !number || !cargo || !username || !registered_by) {
@@ -49,7 +49,7 @@ routerCreateUser.post("/", async (req, res) => {
     // Retornar la contraseña generada (idealmente solo visible para admin o enviada por correo)
     res.status(201).json(
       jsonResponse(201, {
-        message: "Usuario creado exitosamente.",
+        message: "Usuario creado correctamente.",
         tempPassword: plainPassword,
         note: "El usuario deberá cambiar su contraseña al iniciar sesión por primera vez.",
       })

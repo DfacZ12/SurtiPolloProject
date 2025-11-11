@@ -21,7 +21,13 @@ CREATE TABLE EPS (
   DESCRIPCION VARCHAR(100) NULL
 );
 
-INSERT INTO EPS (EPS_Nombre) VALUES ('sanitas');
+INSERT INTO EPS (EPS_Nombre) VALUES ('Sanitas');
+INSERT INTO EPS (EPS_Nombre) VALUES ('Nueva EPS');
+INSERT INTO EPS (EPS_Nombre) VALUES ('Sura');
+INSERT INTO EPS (EPS_Nombre) VALUES ('Farmisanar');
+INSERT INTO EPS (EPS_Nombre) VALUES ('Compensar');
+
+
 -- ==============================
 -- CREAR TABLA USUARIO
 -- ==============================
@@ -75,6 +81,7 @@ CREATE TABLE PRODUCTO (
   iva_total FLOAT NOT NULL,
   Registrado_Por BIGINT NOT NULL,
   Estado BIT NOT NULL,
+  fecha_registro date default (current_date()),
   CONSTRAINT fk_producto_usuario FOREIGN KEY (Registrado_Por) REFERENCES USUARIO(Cedula)
 );
 
@@ -202,6 +209,7 @@ VALUES
 ('Gallina', 23000, 160, 3, 3, 1001219271,1),
 ('Alas', 1500, 98, 3, 3, 1001219271,1);
 
+
 -- ==============================
 -- CONSULTAS DE PRUEBA
 -- ==============================
@@ -210,9 +218,20 @@ SELECT * FROM CARGO;
 SELECT * FROM PRODUCTO;
 SELECT * FROM EPS;
 
-alter table USUARIO
-add column firstLogin bit;
+alter table PRODUCTO
+add column fecha_registro date default (current_date());
 
 select cedula from usuario where username='danielfacunam';
 
-update usuario set cargo=3 where Cedula='78787844884';
+update USUARIO set estado = true where username='danielfacunam'
+
+SELECT aa.cedula, aa.Nombre, aa.Apellido, aa.Direccion,
+             b.EPS_Nombre AS EPS, aa.Tel_Fijo, aa.Celular, aa.Correo,
+             a.username AS Registrador_Por, aa.username,
+             c.NombreCargo AS cargo, aa.fecha_creacion
+      FROM USUARIO a
+      JOIN USUARIO aa ON a.cedula = aa.Registrado_Por
+      JOIN EPS b ON a.EPS = b.COD_EPS
+      JOIN CARGO c ON aa.cargo = c.id
+      WHERE aa.estado = true
+      ORDER BY Nombre DESC
