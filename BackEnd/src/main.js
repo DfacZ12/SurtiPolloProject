@@ -21,6 +21,11 @@ import createUserRouter from './apis/user/createUser.js'
 import updateUserRouter from './apis/user/updateUser.js'
 import deleteUserRouter from './apis/user/deleteUser.js'
 
+import listProductsRouter from './apis/product/listProducts.js'
+import selectProductRouter from './apis/product/selectProduct.js'
+import createProductRouter from './apis/product/createProduct.js'
+import updateProductRouter from './apis/product/updateProduct.js'
+import deleteProductRouter from './apis/product/deleteProduct.js'
 
 const app = express();
 
@@ -46,6 +51,13 @@ app.use('/api/SelectUser',authenticate,selectUserRouter)
 app.use('/api/createUser', authenticate,createUserRouter)
 app.use('/api/updateUser', authenticate,updateUserRouter)
 app.use('/api/deleteUser', authenticate,deleteUserRouter)
+
+//!Productos
+app.use('/api/listProducts',authenticate, listProductsRouter)
+app.use('/api/SelectProduct',authenticate,selectProductRouter)
+app.use('/api/createProduct', authenticate,createProductRouter)
+app.use('/api/updateProduct', authenticate,updateProductRouter)
+app.use('/api/deleteProduct', authenticate,deleteProductRouter)
 
 
 //! EPS
