@@ -100,7 +100,9 @@ const CreateUsers = () => {
 
   const sendCreateUserData = async ()=>{
     try {
-      const response = await axios.post(`${API_URL}/createUser`, formData);
+      const response = await axios.post(`${API_URL}/createUser`, formData,
+        { headers: { Authorization: `Bearer ${auth.getAccessToken()}` } }
+      );
       if (response.status === 201) {
         const result = await Swal.fire({
           icon: "success",

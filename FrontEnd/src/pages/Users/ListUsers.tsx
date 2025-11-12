@@ -44,15 +44,19 @@ const ListUsers = () => {
       await deleteUser(cedula);
     }
     if (result.isDenied) {
-       Swal.fire("Operación cancelada", "", "info");
-      }
-  }
+      Swal.fire("Operación cancelada", "", "info");
+    }
+  };
 
   const deleteUser = async (cedula: number) => {
     try {
-      const response = await axios.put(`${API_URL}/deleteUser/${cedula}`, {},{
-        headers: { Authorization: `Bearer ${auth.getAccessToken()}` },
-      });
+      const response = await axios.put(
+        `${API_URL}/deleteUser/${cedula}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${auth.getAccessToken()}` },
+        }
+      );
       if (response.status === 201) {
         handleListUSer();
         Swal.fire(response.data.body.message, "", "success");
@@ -68,45 +72,27 @@ const ListUsers = () => {
       <table className="w-full text-sm text-left rtl:text-right text-gray-500 ">
         <thead className="bg-gray-800 whitespace-nowrap text-center">
           <tr>
-            <th className="p-4 text-sm font-medium text-white">
-              Cedula
-            </th>
-            <th className="p-4 text-sm font-medium text-white">
-              Nombre
-            </th>
-            <th className="p-4 text-sm font-medium text-white">
-              Apellido
-            </th>
-            <th className="p-4 text-sm font-medium text-white">
-              Dirección
-            </th>
-            <th className="p-4 text-sm font-medium text-white">
-              EPS
-            </th>
+            <th className="p-4 text-sm font-medium text-white">Cedula</th>
+            <th className="p-4 text-sm font-medium text-white">Nombre</th>
+            <th className="p-4 text-sm font-medium text-white">Apellido</th>
+            <th className="p-4 text-sm font-medium text-white">Dirección</th>
+            <th className="p-4 text-sm font-medium text-white">EPS</th>
             <th className="p-4 text-sm font-medium text-white">
               Telefono Fijo
             </th>
-            <th className="p-4 text-sm font-medium text-white">
-              Celular
-            </th>
-            <th className="p-4 text-sm font-medium text-white">
-              Correo
-            </th>
+            <th className="p-4 text-sm font-medium text-white">Celular</th>
+            <th className="p-4 text-sm font-medium text-white">Correo</th>
             <th className="p-4 text-sm font-medium text-white">
               Registrador Por
             </th>
             <th className="p-4 text-sm font-medium text-white">
               Nombre de Usuario
             </th>
-            <th className="p-4 text-sm font-medium text-white">
-              Cargo
-            </th>
+            <th className="p-4 text-sm font-medium text-white">Cargo</th>
             <th className="p-4 text-sm font-medium text-white">
               Fecha Creación
             </th>
-            <th className="p-4 text-sm font-medium text-white">
-              Actions
-            </th>
+            <th className="p-4 text-sm font-medium text-white">Actions</th>
           </tr>
         </thead>
 
@@ -126,21 +112,39 @@ const ListUsers = () => {
                 key={index}
                 className="even:bg-blue-50 bg-white border-b border-gray-200"
               >
-                <td className="p-4 text-center text-sm text-black">{user.cedula}</td>
-                <td className="p-4 text-center text-sm text-black">{user.Nombre}</td>
-                <td className="p-4 text-center text-sm text-black">{user.Apellido}</td>
-                <td className="p-4 text-center text-sm text-black">{user.Direccion}</td>
-                <td className="p-4 text-center text-sm text-black">{user.EPS}</td>
+                <td className="p-4 text-center text-sm text-black">
+                  {user.cedula}
+                </td>
+                <td className="p-4 text-center text-sm text-black">
+                  {user.Nombre}
+                </td>
+                <td className="p-4 text-center text-sm text-black">
+                  {user.Apellido}
+                </td>
+                <td className="p-4 text-center text-sm text-black">
+                  {user.Direccion}
+                </td>
+                <td className="p-4 text-center text-sm text-black">
+                  {user.EPS}
+                </td>
                 <td className="p-4 text-center text-sm text-black">
                   {user.Tel_Fijo ?? "N.A"}
                 </td>
-                <td className="p-4 text-center text-sm text-black">{user.Celular}</td>
-                <td className="p-4 text-center text-sm text-black">{user.Correo}</td>
+                <td className="p-4 text-center text-sm text-black">
+                  {user.Celular}
+                </td>
+                <td className="p-4 text-center text-sm text-black">
+                  {user.Correo}
+                </td>
                 <td className="p-4 text-center text-sm text-green-600">
                   {user.Registrador_Por}
                 </td>
-                <td className="p-4 text-center text-sm text-yellow-600">{user.username}</td>
-                <td className="p-4 text-center text-sm text-black">{user.cargo}</td>
+                <td className="p-4 text-center text-sm text-yellow-600">
+                  {user.username}
+                </td>
+                <td className="p-4 text-center text-sm text-black">
+                  {user.cargo}
+                </td>
                 <td className="p-4 text-center text-sm text-black">
                   {new Date(user.fecha_creacion).toLocaleDateString()}
                 </td>
@@ -166,42 +170,28 @@ const ListUsers = () => {
                       </svg>
                     </button>
                   </Tooltip>
-                  {/* modal */}
-                  <Modal
-                    show={!!selectedUser}
-                    onClose={() => setSelectedUser(null)}
-                    title="Actualizar usuario"
-                  >
-                    {selectedUser && (
-                      <UpdateUser
-                        cedula={selectedUser}
-                        onClose={() => setSelectedUser(null)}
-                        onUpdated={() => handleListUSer()}
-                      />
-                    )}
-                  </Modal>
                   {user.username !== auth.getUser()?.username && (
                     <Tooltip content="Eliminar Usuario" side="top">
-                  <button
-                    className="mr-4 cursor-pointer"
-                    onClick={() => confirmDeleteUser(user.cedula)}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="w-5 fill-red-500 hover:fill-red-700"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        d="M19 7a1 1 0 0 0-1 1v11.191A1.92 1.92 0 0 1 15.99 21H8.01A1.92 1.92 0 0 1 6 19.191V8a1 1 0 0 0-2 0v11.191A3.918 3.918 0 0 0 8.01 23h7.98A3.918 3.918 0 0 0 20 19.191V8a1 1 0 0 0-1-1Zm1-3h-4V2a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v2H4a1 1 0 0 0 0 2h16a1 1 0 0 0 0-2ZM10 4V3h4v1Z"
-                        data-original="#000000"
-                      />
-                      <path
-                        d="M11 17v-7a1 1 0 0 0-2 0v7a1 1 0 0 0 2 0Zm4 0v-7a1 1 0 0 0-2 0v7a1 1 0 0 0 2 0Z"
-                        data-original="#000000"
-                      />
-                    </svg>
-                  </button>
-                  </Tooltip>
+                      <button
+                        className="mr-4 cursor-pointer"
+                        onClick={() => confirmDeleteUser(user.cedula)}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="w-5 fill-red-500 hover:fill-red-700"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="M19 7a1 1 0 0 0-1 1v11.191A1.92 1.92 0 0 1 15.99 21H8.01A1.92 1.92 0 0 1 6 19.191V8a1 1 0 0 0-2 0v11.191A3.918 3.918 0 0 0 8.01 23h7.98A3.918 3.918 0 0 0 20 19.191V8a1 1 0 0 0-1-1Zm1-3h-4V2a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v2H4a1 1 0 0 0 0 2h16a1 1 0 0 0 0-2ZM10 4V3h4v1Z"
+                            data-original="#000000"
+                          />
+                          <path
+                            d="M11 17v-7a1 1 0 0 0-2 0v7a1 1 0 0 0 2 0Zm4 0v-7a1 1 0 0 0-2 0v7a1 1 0 0 0 2 0Z"
+                            data-original="#000000"
+                          />
+                        </svg>
+                      </button>
+                    </Tooltip>
                   )}
                 </td>
               </tr>
@@ -209,6 +199,20 @@ const ListUsers = () => {
           )}
         </tbody>
       </table>
+      {/* modal */}
+      <Modal
+        show={!!selectedUser}
+        onClose={() => setSelectedUser(null)}
+        title="Actualizar usuario"
+      >
+        {selectedUser && (
+          <UpdateUser
+            cedula={selectedUser}
+            onClose={() => setSelectedUser(null)}
+            onUpdated={() => handleListUSer()}
+          />
+        )}
+      </Modal>
     </div>
   );
 };

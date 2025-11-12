@@ -1,10 +1,10 @@
 export interface IProduct {
     Id: number;
-    Nombre: string;
-    Precio_Unitario: number;
-    cantidad: number;
-    Tiempo_Refrigeracion: number;
+    name: string;
+    price: number;
+    quantity: number;
+    refrigeration_time: number;
     iva: number;
-    Registrador_Por: string;
+    registered_by: string;
     fecha_registro: string;
 }

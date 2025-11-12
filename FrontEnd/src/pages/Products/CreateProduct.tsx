@@ -1,13 +1,8 @@
 import { useEffect, useState } from "react";
-import { faUser, faWandMagicSparkles } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Tooltip from "../../shared/Tooltip";
-import { useAuth } from "../../auth/AuthProvider";
+import { faDrumstickBite } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";import { useAuth } from "../../auth/AuthProvider";
 import axios from "axios";
 import { API_URL } from "../../auth/Consts";
-import type { Ieps } from "../../interfaces/IEps";
-import type { Irole } from "../../interfaces/IRole";
-import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
@@ -17,37 +12,21 @@ const CreateProduct = () => {
   const goTo = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
-    lname: "",
-    cedula: "",
-    direccion: "",
-    email: "",
-    number: "",
-    phone: "",
-    eps: "",
-    cargo: "",
-    username: "",
+    price: 0,
+    quantity: 0,
+    refrigeration_time: 0,
+    iva: 0,
     registered_by: authUser
   });
-  const [epsData, setEpsData] = useState([])
-  const [rolData, setRolData  ] = useState([])
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const requiredFields = ["name", "lname", "cedula", "direccion" ,"number" ,"email", "eps", "cargo", "username"];
+  const requiredFields = ["name", "price", "quantity", "refrigeration_time", "iva"];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: "" })); // limpiar error cuando el usuario escribe
-  };
-
-  const generateUsernameSuggestion = () => {
-    const base = `${formData.name.toLowerCase()}${formData.lname.toLowerCase().charAt(0)}`;
-    if(!base)return
-    const randomNum = Math.floor(Math.random() * 900 + 100); // número aleatorio entre 100–999
-    const username = `${base}${randomNum}`.replace(/ /g, "");
-    console.log(username)
-    setFormData((prev) => ({ ...prev, username }));
   };
 
   const validateForm = () => {
@@ -64,7 +43,7 @@ const CreateProduct = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
-    sendCreateUserData()
+    sendCreateProductData()
   };
 
   const inputClass = (name: string) =>
@@ -72,42 +51,16 @@ const CreateProduct = () => {
       errors[name] ? "border-red-500 focus:border-red-500" : "border-gray-200 focus:border-blue-600"
     }`;
 
-  const getEps = async ()=>{
+  const sendCreateProductData = async ()=>{
+    console.log("authUser",auth.getUser());
     try {
-      const response = await axios.get(`${API_URL}/selectEps`, {
-        headers: { Authorization: `Bearer ${auth.getAccessToken()}` },
-      });
-      if (response.status === 200) {
-        setEpsData(response.data.body);
-      }
-    } catch{
-      toast.error("error al Traer la info de las EPS.");
-    }
-  }
-
-  const getRoles = async ()=>{
-    try {
-      const response = await axios.get(`${API_URL}/selectRoles`, {
-        headers: { Authorization: `Bearer ${auth.getAccessToken()}` },
-      });
-      if (response.status === 200) {
-        setRolData(response.data.body);
-      }
-    } catch{
-      toast.error("error al Traer la info de los cargos ");
-    }
-  }
-
-  const sendCreateUserData = async ()=>{
-    try {
-      const response = await axios.post(`${API_URL}/createUser`, formData);
+      const response = await axios.post(`${API_URL}/createProduct`, formData,
+        { headers: { Authorization: `Bearer ${auth.getAccessToken()}` } }
+      );
       if (response.status === 201) {
         const result = await Swal.fire({
           icon: "success",
-          title: "Usuario creado correctamente",
-          html: `<p>Contraseña Temporal: ${response.data.body.tempPassword}</p>
-          <p>${response.data.body.note}</p>
-          `,
+          title: "Producto creado correctamente",
           showConfirmButton: true,
           confirmButtonText: "Aceptar",
           confirmButtonColor: "#2563eb",
@@ -115,7 +68,7 @@ const CreateProduct = () => {
           allowEscapeKey: false,
         });
         if(result.isConfirmed){
-          goTo("/users");
+          goTo("/products");
         }
       }
     } catch (error) {
@@ -127,9 +80,8 @@ const CreateProduct = () => {
   }
 
   useEffect(()=>{
-    getEps();
-    getRoles();
   },[])
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -153,181 +105,80 @@ const CreateProduct = () => {
           {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
         </div>
 
-        {/* Apellido */}
+        {/* Precio Unitario */}
         <div>
-          <label htmlFor="inptLastName" className="text-slate-900 text-sm font-medium mb-2 block">
-            Apellido *
+          <label htmlFor="inptPrice" className="text-slate-900 text-sm font-medium mb-2 block">
+            Precio Unitario *
           </label>
           <input
-            id="inptLastName"
-            name="lname"
-            type="text"
-            value={formData.lname}
+            id="inptPrice"
+            name="price"
+            inputMode="numeric"
+            value={formData.price}
             onChange={handleChange}
-            className={inputClass("lname")}
-            placeholder="Ingresa el apellido"
+            onInput={(e) => (e.currentTarget.value = e.currentTarget.value.replace(/\D/g, ""))}
+            className={inputClass("price")}
+            placeholder="Ingresa el precio unitario"
           />
-          {errors.lname && <p className="text-red-500 text-xs mt-1">{errors.lname}</p>}
+          {errors.price && <p className="text-red-500 text-xs mt-1">{errors.price}</p>}
         </div>
 
-        {/* Cédula */}
+        {/* Cantidad */}
         <div>
-          <label htmlFor="inptCC" className="text-slate-900 text-sm font-medium mb-2 block">
-            Cédula *
+          <label htmlFor="inptQuantity" className="text-slate-900 text-sm font-medium mb-2 block">
+            Cantidad *
           </label>
           <input
-            id="inptCC"
-            name="cedula"
+            id="inptQuantity"
+            name="quantity"
             inputMode="numeric"
             maxLength={11}
-            value={formData.cedula}
+            value={formData.quantity}
             onInput={(e) => (e.currentTarget.value = e.currentTarget.value.replace(/\D/g, ""))}
             onChange={handleChange}
-            className={inputClass("cedula")}
-            placeholder="Ingresa número de cédula"
+            className={inputClass("quantity")}
+            placeholder="Ingresa la cantidad"
           />
-          {errors.cedula && <p className="text-red-500 text-xs mt-1">{errors.cedula}</p>}
+          {errors.quantity && <p className="text-red-500 text-xs mt-1">{errors.quantity}</p>}
         </div>
 
-        {/* Dirección */}
+        {/* IVA */}
         <div>
-          <label htmlFor="inptAddress" className="text-slate-900 text-sm font-medium mb-2 block">
-            Dirección
+          <label htmlFor="inptIva" className="text-slate-900 text-sm font-medium mb-2 block">
+            IVA *
           </label>
           <input
-            id="inptAddress"
-            name="direccion"
-            type="text"
-            value={formData.direccion}
-            onChange={handleChange}
-            className={inputClass("direccion")}
-            placeholder="Calle XXX"
-          />
-          {errors.direccion && <p className="text-red-500 text-xs mt-1">{errors.direccion}</p>}
-        </div>
-
-        {/* Email */}
-        <div>
-          <label htmlFor="inptEmail" className="text-slate-900 text-sm font-medium mb-2 block">
-            Correo electrónico *
-          </label>
-          <input
-            id="inptEmail"
-            name="email"
-            type="email"
-            value={formData.email}
-            onChange={handleChange}
-            className={inputClass("email")}
-            placeholder="nombre@ejemplo.com"
-          />
-          {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
-        </div>
-
-        {/* Celular */}
-        <div>
-          <label htmlFor="inptCel" className="text-slate-900 text-sm font-medium mb-2 block">
-            Celular
-          </label>
-          <input
-            id="inptCel"
-            name="number"
-            type="text"
-            maxLength={10}
-            onInput={(e) => (e.currentTarget.value = e.currentTarget.value.replace(/\D/g, ""))}
-            value={formData.number}
-            onChange={handleChange}
-            className={inputClass("number")}
-            placeholder="321 XXXXXXX"
-          />
-            {errors.number && <p className="text-red-500 text-xs mt-1">{errors.number}</p>}
-        </div>
-
-        {/* Teléfono fijo */}
-        <div>
-          <label htmlFor="inptPhone" className="text-slate-900 text-sm font-medium mb-2 block">
-            Teléfono fijo
-          </label>
-          <input
-            id="inptPhone"
-            name="phone"
+            id="inptIva"
+            name="iva"
             inputMode="numeric"
-            maxLength={8}
-            value={formData.phone}
+            value={formData.iva}
+            onChange={handleChange}
+            onInput={(e) => (e.currentTarget.value = e.currentTarget.value.replace(/\D/g, ""))}
+            className={inputClass("iva")}
+            placeholder="Ingresa el IVA"
+          />
+          {errors.iva && <p className="text-red-500 text-xs mt-1">{errors.iva}</p>}
+        </div>
+        {/* Tiempo de Refrigeración */}
+        <div>
+          <label htmlFor="inptRefrigerationTime" className="text-slate-900 text-sm font-medium mb-2 block">
+            Tiempo de Refrigeración *
+          </label>
+          <input
+            id="inptRefrigerationTime"
+            name="refrigeration_time"
+            inputMode="numeric"
+            maxLength={11}
+            value={formData.refrigeration_time}
             onInput={(e) => (e.currentTarget.value = e.currentTarget.value.replace(/\D/g, ""))}
             onChange={handleChange}
-            className={inputClass("phone")}
-            placeholder="#######"
+            className={inputClass("refrigeration_time")}
+            placeholder="Ingresa el tiempo de refrigeración"
           />
+          {errors.refrigeration_time && <p className="text-red-500 text-xs mt-1">{errors.refrigeration_time}</p>}
         </div>
 
-        {/* EPS */}
-        <div>
-          <label htmlFor="slcEps" className="text-slate-900 text-sm font-medium mb-2 block">
-            EPS *
-          </label>
-          <select
-            id="slcEps"
-            name="eps"
-            value={formData.eps}
-            onChange={handleChange}
-            className={inputClass("eps")}
-          >
-            <option value="">Seleccione una opción...</option>
-          {epsData.map((eps: Ieps)=>(
-            <option key={eps.Id} value={eps.Id}>{eps.Nombre}</option>
-          ))}
-          </select>
-          {errors.eps && <p className="text-red-500 text-xs mt-1">{errors.eps}</p>}
-        </div>
 
-        {/* Cargo */}
-        <div>
-          <label htmlFor="slcCargo" className="text-slate-900 text-sm font-medium mb-2 block">
-            Cargo *
-          </label>
-          <select
-            id="slcCargo"
-            name="cargo"
-            value={formData.cargo}
-            onChange={handleChange}
-            className={inputClass("cargo")}
-          >
-            <option value="">Seleccione un cargo...</option>
-          {rolData.map((role: Irole)=>(
-            <option key={role.Id} value={role.Id}>{role.Nombre}</option>
-          ))}
-          </select>
-          {errors.cargo && <p className="text-red-500 text-xs mt-1">{errors.cargo}</p>}
-        </div>
-
-        {/* Username + sugerencia */}
-        <div className="relative">
-          <label htmlFor="inptUsername" className="text-slate-900 text-sm font-medium mb-2 block">
-            Nombre de usuario *
-          </label>
-          <div className="flex items-center">
-            <input
-              id="inptUsername"
-              name="username"
-              type="text"
-              value={formData.username}
-              onChange={handleChange}
-              className={`${inputClass("username")} flex-1`}
-              placeholder="usuario..."
-              disabled
-            />
-            <Tooltip content="Generar nombre de Usuario" side="top">
-            <button
-              type="button"
-              onClick={generateUsernameSuggestion}
-              className="ml-2 bg-indigo-500 hover:bg-indigo-600 text-white px-3 py-2 rounded-sm text-sm font-medium cursor-pointer"
-            >
-              <FontAwesomeIcon icon={faWandMagicSparkles} />
-            </button>
-            </Tooltip>
-          </div>
-          {errors.username && <p className="text-red-500 text-xs mt-1">{errors.username}</p>}
-        </div>
       </div>
 
       <div className="mt-8">
@@ -335,8 +186,8 @@ const CreateProduct = () => {
           type="submit"
           className="w-full py-2.5 px-5 text-sm font-medium tracking-wider rounded-sm cursor-pointer text-white bg-blue-600 hover:bg-blue-700 focus:outline-0"
         >
-          Crear Usuario
-          <FontAwesomeIcon className="ml-2" icon={faUser} />
+          Crear Producto
+          <FontAwesomeIcon className="ml-2" icon={faDrumstickBite} />
         </button>
       </div>
     </form>

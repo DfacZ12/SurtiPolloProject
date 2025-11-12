@@ -2,53 +2,44 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { API_URL } from "../../auth/Consts";
 import { useAuth } from "../../auth/AuthProvider";
-import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { faDrumstickBite } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import type { IUser } from "../../interfaces/IUsersList";
+import type { IProduct } from "../../interfaces/IProduct";
 import Swal from "sweetalert2";
 
-const UpdateProduct = ({ Id, onClose, onUpdated }: { Id: number, onClose: () => void, onUpdated: () => void }) => {
+const UpdateProduct = ({ Id, onClose, onUpdated }: { Id: number | null, onClose: () => void, onUpdated: () => void }) => {
   const auth = useAuth();
-  const [userInfo, setUserInfo] = useState<IUser[] | []>([]);
+  const [productInfo, setproductInfo] = useState<IProduct[] | []>([]);
   const [formData, setFormData] = useState({
     name: "",
-    lname: "",
-    cc: "",
-    direccion: "",
-    email: "",
-    number: "",
-    phone: "",
-    eps: "",
-    cargo: "",
+    price: 0,
+    quantity: 0,
+    refrigeration_time: 0,
+    iva: 0,
   });
 
   const requiredFields = [
     "name",
-    "lname",
-    "cc",
-    "direccion",
-    "number",
-    "email",
-    "eps",
-    "cargo",
+    "price",
+    "quantity",
+    "refrigeration_time",
+    "iva",
   ];
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // useEffect(() => {
-  //   // if (userInfo.length > 0) {
-  //   //   const u: IUser = userInfo[0];
-  //   //   setFormData({
-  //   //     name: u?.Nombre || "",
-  //   //     lname: u?.Apellido || "",
-  //   //     cc: u?.cedula?.toString() || "",
-  //   //     direccion: u?.Direccion || "",
-  //   //     email: u?.Correo || "",
-  //   //     number: u?.Celular || "",
-  //   //     phone: u?.Tel_Fijo?.toString() || "",
-  //   //   });
-  //   // }
-  // }, []);
+  useEffect(() => {
+    if (productInfo.length > 0) {
+      const u: IProduct = productInfo[0];
+      setFormData({
+        name: u?.name || "",
+        price: u?.price || 0,
+        quantity: u?.quantity || 0,
+        refrigeration_time: u?.refrigeration_time || 0,
+        iva: u?.iva || 0,
+      });
+    }
+  }, [productInfo]);
 
   const handleSelectProduct = async () => {
     try {
@@ -56,7 +47,7 @@ const UpdateProduct = ({ Id, onClose, onUpdated }: { Id: number, onClose: () => 
         headers: { Authorization: `Bearer ${auth.getAccessToken()}` },
       });
       if (response.status === 201) {
-        // setUserInfo(response.data.body);
+        setproductInfo(response.data.body);
       }
     } catch (e) {
       console.error("error al Traer la info del usuario.", e);
@@ -108,246 +99,121 @@ const UpdateProduct = ({ Id, onClose, onUpdated }: { Id: number, onClose: () => 
       Swal.fire("Error al actualizar usuario", "", "error");
     }
   };
-
   useEffect(() => {
     handleSelectProduct();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+
   return (
-    <form
-      onSubmit={handleSubmitUpdate}
-      className="mx-auto bg-white [box-shadow:0_2px_13px_-6px_rgba(0,0,0,0.4)] xl:p-8 p-4 rounded-md"
-    >
-      <div className="grid md:grid-cols-2 gap-3">
-        {/* Nombre */}
-        <div>
-          <label
-            htmlFor="inptName"
-            className="text-slate-900 text-sm font-medium mb-2 block"
-          >
-            Nombre *
-          </label>
-          <input
-            id="inptName"
-            name="name"
-            type="text"
-            value={formData.name}
-            onChange={handleChange}
-            className={inputClass("name")}
-            placeholder="Ingresa el nombre"
-          />
-          {errors.name && (
-            <p className="text-red-500 text-xs mt-1">{errors.name}</p>
-          )}
+      <form
+        onSubmit={handleSubmitUpdate}
+        className="mx-auto bg-white [box-shadow:0_2px_13px_-6px_rgba(0,0,0,0.4)] xl:p-8 p-4 rounded-md"
+      >
+        <div className="grid md:grid-cols-2 gap-3">
+          {/* Nombre */}
+          <div>
+            <label htmlFor="inptName" className="text-slate-900 text-sm font-medium mb-2 block">
+              Nombre *
+            </label>
+            <input
+              id="inptName"
+              name="name"
+              type="text"
+              value={formData.name}
+              onChange={handleChange}
+              className={inputClass("name")}
+              placeholder="Ingresa el nombre"
+            />
+            {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
+          </div>
+
+          {/* Precio Unitario */}
+          <div>
+            <label htmlFor="inptPrice" className="text-slate-900 text-sm font-medium mb-2 block">
+              Precio Unitario *
+            </label>
+            <input
+              id="inptPrice"
+              name="price"
+              inputMode="numeric"
+              value={formData.price}
+              onChange={handleChange}
+              onInput={(e) => (e.currentTarget.value = e.currentTarget.value.replace(/\D/g, ""))}
+              className={inputClass("price")}
+              placeholder="Ingresa el precio unitario"
+            />
+            {errors.price && <p className="text-red-500 text-xs mt-1">{errors.price}</p>}
+          </div>
+
+          {/* Cantidad */}
+          <div>
+            <label htmlFor="inptQuantity" className="text-slate-900 text-sm font-medium mb-2 block">
+              Cantidad *
+            </label>
+            <input
+              id="inptQuantity"
+              name="quantity"
+              inputMode="numeric"
+              maxLength={11}
+              value={formData.quantity}
+              onInput={(e) => (e.currentTarget.value = e.currentTarget.value.replace(/\D/g, ""))}
+              onChange={handleChange}
+              className={inputClass("quantity")}
+              placeholder="Ingresa la cantidad"
+            />
+            {errors.quantity && <p className="text-red-500 text-xs mt-1">{errors.quantity}</p>}
+          </div>
+
+          {/* IVA */}
+          <div>
+            <label htmlFor="inptIva" className="text-slate-900 text-sm font-medium mb-2 block">
+              IVA *
+            </label>
+            <input
+              id="inptIva"
+              name="iva"
+              inputMode="numeric"
+              value={formData.iva}
+              onChange={handleChange}
+              onInput={(e) => (e.currentTarget.value = e.currentTarget.value.replace(/\D/g, ""))}
+              className={inputClass("iva")}
+              placeholder="Ingresa el IVA"
+            />
+            {errors.iva && <p className="text-red-500 text-xs mt-1">{errors.iva}</p>}
+          </div>
+          {/* Tiempo de Refrigeración */}
+          <div>
+            <label htmlFor="inptRefrigerationTime" className="text-slate-900 text-sm font-medium mb-2 block">
+              Tiempo de Refrigeración *
+            </label>
+            <input
+              id="inptRefrigerationTime"
+              name="refrigeration_time"
+              inputMode="numeric"
+              maxLength={11}
+              value={formData.refrigeration_time}
+              onInput={(e) => (e.currentTarget.value = e.currentTarget.value.replace(/\D/g, ""))}
+              onChange={handleChange}
+              className={inputClass("refrigeration_time")}
+              placeholder="Ingresa el tiempo de refrigeración"
+            />
+            {errors.refrigeration_time && <p className="text-red-500 text-xs mt-1">{errors.refrigeration_time}</p>}
+          </div>
+
+
         </div>
 
-        {/* Apellido */}
-        <div>
-          <label
-            htmlFor="inptLastName"
-            className="text-slate-900 text-sm font-medium mb-2 block"
+        <div className="mt-8">
+          <button
+            type="submit"
+            className="w-full py-2.5 px-5 text-sm font-medium tracking-wider rounded-sm cursor-pointer text-white bg-blue-600 hover:bg-blue-700 focus:outline-0"
           >
-            Apellido *
-          </label>
-          <input
-            id="inptLastName"
-            name="lname"
-            type="text"
-            value={formData.lname}
-            onChange={handleChange}
-            className={inputClass("lname")}
-            placeholder="Ingresa el apellido"
-          />
-          {errors.lname && (
-            <p className="text-red-500 text-xs mt-1">{errors.lname}</p>
-          )}
+            Actualizar Producto
+            <FontAwesomeIcon className="ml-2" icon={faDrumstickBite} />
+          </button>
         </div>
-
-        {/* Cédula */}
-        <div>
-          <label
-            htmlFor="inptCC"
-            className="text-slate-900 text-sm font-medium mb-2 block"
-          >
-            Cédula *
-          </label>
-          <input
-            id="inptCC"
-            name="cc"
-            inputMode="numeric"
-            maxLength={11}
-            value={formData.cc}
-            onInput={(e) =>
-              (e.currentTarget.value = e.currentTarget.value.replace(/\D/g, ""))
-            }
-            onChange={handleChange}
-            className={inputClass("cedula")}
-            placeholder="Ingresa número de cédula"
-          />
-          {errors.cc && (
-            <p className="text-red-500 text-xs mt-1">{errors.cc}</p>
-          )}
-        </div>
-
-        {/* Dirección */}
-        <div>
-          <label
-            htmlFor="inptAddress"
-            className="text-slate-900 text-sm font-medium mb-2 block"
-          >
-            Dirección
-          </label>
-          <input
-            id="inptAddress"
-            name="direccion"
-            type="text"
-            value={formData.direccion}
-            onChange={handleChange}
-            className={inputClass("direccion")}
-            placeholder="Calle XXX"
-          />
-          {errors.direccion && (
-            <p className="text-red-500 text-xs mt-1">{errors.direccion}</p>
-          )}
-        </div>
-
-        {/* Email */}
-        <div>
-          <label
-            htmlFor="inptEmail"
-            className="text-slate-900 text-sm font-medium mb-2 block"
-          >
-            Correo electrónico *
-          </label>
-          <input
-            id="inptEmail"
-            name="email"
-            type="email"
-            value={formData.email}
-            onChange={handleChange}
-            className={inputClass("email")}
-            placeholder="nombre@ejemplo.com"
-          />
-          {errors.email && (
-            <p className="text-red-500 text-xs mt-1">{errors.email}</p>
-          )}
-        </div>
-
-        {/* Celular */}
-        <div>
-          <label
-            htmlFor="inptCel"
-            className="text-slate-900 text-sm font-medium mb-2 block"
-          >
-            Celular
-          </label>
-          <input
-            id="inptCel"
-            name="number"
-            type="text"
-            maxLength={10}
-            onInput={(e) =>
-              (e.currentTarget.value = e.currentTarget.value.replace(/\D/g, ""))
-            }
-            value={formData.number}
-            onChange={handleChange}
-            className={inputClass("number")}
-            placeholder="321 XXXXXXX"
-          />
-          {errors.number && (
-            <p className="text-red-500 text-xs mt-1">{errors.number}</p>
-          )}
-        </div>
-
-        {/* Teléfono fijo */}
-        <div>
-          <label
-            htmlFor="inptPhone"
-            className="text-slate-900 text-sm font-medium mb-2 block"
-          >
-            Teléfono fijo
-          </label>
-          <input
-            id="inptPhone"
-            name="phone"
-            inputMode="numeric"
-            maxLength={8}
-            value={formData.phone}
-            onInput={(e) =>
-              (e.currentTarget.value = e.currentTarget.value.replace(/\D/g, ""))
-            }
-            onChange={handleChange}
-            className={inputClass("phone")}
-            placeholder="#######"
-          />
-        </div>
-
-        {/* EPS */}
-        {/* <div>
-          <label
-            htmlFor="slcEps"
-            className="text-slate-900 text-sm font-medium mb-2 block"
-          >
-            EPS *
-          </label>
-          <select
-            id="slcEps"
-            name="eps"
-            value={formData.eps}
-            onChange={handleChange}
-            className={inputClass("eps")}
-          >
-            <option value="">Seleccione una opción...</option>
-            {epsData.map((eps: Ieps) => (
-              <option key={eps.Id} value={eps.Id}>
-                {eps.Nombre}
-              </option>
-            ))}
-          </select>
-          {errors.eps && (
-            <p className="text-red-500 text-xs mt-1">{errors.eps}</p>
-          )}
-        </div> */}
-
-        {/* Cargo */}
-        {/* <div>
-          <label
-            htmlFor="slcCargo"
-            className="text-slate-900 text-sm font-medium mb-2 block"
-          >
-            Cargo *
-          </label>
-          <select
-            id="slcCargo"
-            name="cargo"
-            value={formData.cargo}
-            onChange={handleChange}
-            className={inputClass("cargo")}
-          >
-            <option value="">Seleccione un cargo...</option>
-            {rolData.map((role: Irole) => (
-              <option key={role.Id} value={role.Id}>
-                {role.Nombre}
-              </option>
-            ))}
-          </select>
-          {errors.cargo && (
-            <p className="text-red-500 text-xs mt-1">{errors.cargo}</p>
-          )}
-        </div> */}
-      </div>
-
-      <div className="mt-8">
-        <button
-          type="submit"
-          className="w-full py-2.5 px-5 text-sm font-medium tracking-wider rounded-sm cursor-pointer text-white bg-blue-600 hover:bg-blue-700 focus:outline-0"
-        >
-          Actualizar Usuario
-          <FontAwesomeIcon className="ml-2" icon={faUser} />
-        </button>
-      </div>
-    </form>
-  );
+      </form>
+    );
 };
 
 export default UpdateProduct;

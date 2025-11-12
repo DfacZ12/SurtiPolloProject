@@ -44,15 +44,19 @@ const ListProducts = () => {
       await deleteProduct(Id);
     }
     if (result.isDenied) {
-       Swal.fire("Operación cancelada", "", "info");
-      }
-  }
+      Swal.fire("Operación cancelada", "", "info");
+    }
+  };
 
   const deleteProduct = async (Id: number) => {
     try {
-      const response = await axios.put(`${API_URL}/deleteProduct/${Id}`, {},{
-        headers: { Authorization: `Bearer ${auth.getAccessToken()}` },
-      });
+      const response = await axios.put(
+        `${API_URL}/deleteProduct/${Id}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${auth.getAccessToken()}` },
+        }
+      );
       if (response.status === 201) {
         handleListProduct();
         Swal.fire(response.data.body.message, "", "success");
@@ -68,33 +72,23 @@ const ListProducts = () => {
       <table className="w-full text-sm text-left rtl:text-right text-gray-500 ">
         <thead className="bg-gray-800 whitespace-nowrap text-center">
           <tr>
-            <th className="p-4 text-sm font-medium text-white">
-              Id
-            </th>
-            <th className="p-4 text-sm font-medium text-white">
-              Nombre
-            </th>
+            <th className="p-4 text-sm font-medium text-white">Id</th>
+            <th className="p-4 text-sm font-medium text-white">Nombre</th>
             <th className="p-4 text-sm font-medium text-white">
               Precio Unitario
             </th>
-            <th className="p-4 text-sm font-medium text-white">
-              Cantidad
-            </th>
+            <th className="p-4 text-sm font-medium text-white">Cantidad</th>
             <th className="p-4 text-sm font-medium text-white">
               Tiempo Refrigeracion
             </th>
-            <th className="p-4 text-sm font-medium text-white">
-              IVA
-            </th>
+            <th className="p-4 text-sm font-medium text-white">IVA</th>
             <th className="p-4 text-sm font-medium text-white">
               Registrador Por
             </th>
             <th className="p-4 text-sm font-medium text-white">
               Fecha Creación
             </th>
-            <th className="p-4 text-sm font-medium text-white">
-              Actions
-            </th>
+            <th className="p-4 text-sm font-medium text-white">Actions</th>
           </tr>
         </thead>
 
@@ -114,16 +108,30 @@ const ListProducts = () => {
                 key={index}
                 className="even:bg-blue-50 bg-white border-b border-gray-200"
               >
-                <td className="p-4 text-center text-sm text-black">{user.Id}</td>
-                <td className="p-4 text-center text-sm text-black">{user.Nombre}</td>
-                <td className="p-4 text-center text-sm text-black">{user.Precio_Unitario}</td>
-                <td className="p-4 text-center text-sm text-black">{user.cantidad}</td>
-                <td className="p-4 text-center text-sm text-black">{user.Tiempo_Refrigeracion}</td>
-                <td className="p-4 text-center text-sm text-black">{user.iva}</td>
                 <td className="p-4 text-center text-sm text-black">
-                  {user.Registrador_Por}
+                  {user.Id}
                 </td>
-                <td className="p-4 text-sm text-black">{user.fecha_registro}</td>
+                <td className="p-4 text-center text-sm text-black">
+                  {user.name}
+                </td>
+                <td className="p-4 text-center text-sm text-black">
+                  {user.price}
+                </td>
+                <td className="p-4 text-center text-sm text-black">
+                  {user.quantity}
+                </td>
+                <td className="p-4 text-center text-sm text-black">
+                  {user.refrigeration_time}
+                </td>
+                <td className="p-4 text-center text-sm text-black">
+                  {user.iva}
+                </td>
+                <td className="p-4 text-center text-sm text-black">
+                  {user.registered_by}
+                </td>
+                <td className="p-4 text-sm text-black">
+                  {user.fecha_registro}
+                </td>
                 <td className="p-4 ">
                   <Tooltip content="Actualizar" side="top">
                     <button
@@ -146,40 +154,27 @@ const ListProducts = () => {
                       </svg>
                     </button>
                   </Tooltip>
-                  {/* modal */}
-                  <Modal
-                    show={!!selectedProduct}
-                    onClose={() => setSelectedProduct(null)}
-                    title="Actualizar usuario"
-                  >
-                    {selectedProduct && (
-                      <UpdateProduct
-                        Id={selectedProduct}
-                        onClose={() => setSelectedProduct(null)}
-                        onUpdated={() => handleListProduct()}
-                      />
-                    )}
-                  </Modal>
-                    <Tooltip content="Eliminar Usuario" side="top">
-                  <button
-                    className="mr-4 cursor-pointer"
-                    onClick={() => confirmDeleteProduct(user.Id)}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="w-5 fill-red-500 hover:fill-red-700"
-                      viewBox="0 0 24 24"
+
+                  <Tooltip content="Eliminar Usuario" side="top">
+                    <button
+                      className="mr-4 cursor-pointer"
+                      onClick={() => confirmDeleteProduct(user.Id)}
                     >
-                      <path
-                        d="M19 7a1 1 0 0 0-1 1v11.191A1.92 1.92 0 0 1 15.99 21H8.01A1.92 1.92 0 0 1 6 19.191V8a1 1 0 0 0-2 0v11.191A3.918 3.918 0 0 0 8.01 23h7.98A3.918 3.918 0 0 0 20 19.191V8a1 1 0 0 0-1-1Zm1-3h-4V2a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v2H4a1 1 0 0 0 0 2h16a1 1 0 0 0 0-2ZM10 4V3h4v1Z"
-                        data-original="#000000"
-                      />
-                      <path
-                        d="M11 17v-7a1 1 0 0 0-2 0v7a1 1 0 0 0 2 0Zm4 0v-7a1 1 0 0 0-2 0v7a1 1 0 0 0 2 0Z"
-                        data-original="#000000"
-                      />
-                    </svg>
-                  </button>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="w-5 fill-red-500 hover:fill-red-700"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M19 7a1 1 0 0 0-1 1v11.191A1.92 1.92 0 0 1 15.99 21H8.01A1.92 1.92 0 0 1 6 19.191V8a1 1 0 0 0-2 0v11.191A3.918 3.918 0 0 0 8.01 23h7.98A3.918 3.918 0 0 0 20 19.191V8a1 1 0 0 0-1-1Zm1-3h-4V2a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v2H4a1 1 0 0 0 0 2h16a1 1 0 0 0 0-2ZM10 4V3h4v1Z"
+                          data-original="#000000"
+                        />
+                        <path
+                          d="M11 17v-7a1 1 0 0 0-2 0v7a1 1 0 0 0 2 0Zm4 0v-7a1 1 0 0 0-2 0v7a1 1 0 0 0 2 0Z"
+                          data-original="#000000"
+                        />
+                      </svg>
+                    </button>
                   </Tooltip>
                 </td>
               </tr>
@@ -187,6 +182,18 @@ const ListProducts = () => {
           )}
         </tbody>
       </table>
+      {/* modal */}
+      <Modal
+        show={!!selectedProduct}
+        onClose={() => setSelectedProduct(null)}
+        title="Actualizar usuario"
+      >
+        <UpdateProduct
+          Id={selectedProduct}
+          onClose={() => setSelectedProduct(null)}
+          onUpdated={() => handleListProduct()}
+        />
+      </Modal>
     </div>
   );
 };

@@ -23,7 +23,7 @@ export const menuItems: iMenuItem[] = [
     icon: faUsers,
     submenus: [
       { label: "Lista Usuarios",title:"Lista de Usuarios", path: "/Users/List" },
-      { label: "Crear Usuario",title:"Creación de Usuarios", path: "/Users/Create" },
+      { label: "Nuevo Usuario",title:"Creación de Usuarios", path: "/Users/Create" },
     ],
     roles: ["Administrador"],
   },
@@ -33,7 +33,7 @@ export const menuItems: iMenuItem[] = [
     icon: faUserTag,
     submenus: [
       { label: "Lista clientes", title:"Lista de Clientes",path: "/Clients/List" },
-      { label: "Crear cliente", title:"Creación de Clientes",path: "/Clients/Create" },
+      { label: "Nuevo cliente", title:"Creación de Clientes",path: "/Clients/Create" },
     ],
     roles: ["Administrador", "Cajero"],
   },
