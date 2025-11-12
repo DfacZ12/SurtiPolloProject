@@ -5,15 +5,15 @@ import { authorizeRole } from "../../../auth/authRoles.js";
 
 const routerUpdateUser = express.Router();
 
-routerUpdateUser.put("/:id", authorizeRole([1]), async (req, res) => {
+routerUpdateUser.put("/:id", authorizeRole([1,2]), async (req, res) => {
   const id = req.params.id;
-  const {name,price,cant,tmpoRefri,iva,registered_by} = req.body
+  const {name,price,quantity,refrigeration_time,iva} = req.body
   try{
     const db = await connectDB();
     await db.execute(
-    `UPDATE PRODUCTO SET Nombre = ?, Pre_Uni = ?, Cant_Dispo = ?, Tiempo_de_refrigeracion = ?, iva_total = ?,
-    Registrado_Por = ? where Id = ?`,
-    [name,price,cant,tmpoRefri,iva,registered_by,id]
+    `UPDATE PRODUCTO SET Nombre = ?, Pre_Uni = ?, Cant_Dispo = ?, Tiempo_de_refrigeracion = ?, iva_total = ?
+    where Id = ?`,
+    [name,price,quantity,refrigeration_time,iva,id]
     );
     res
       .status(201)

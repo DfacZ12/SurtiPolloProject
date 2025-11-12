@@ -5,13 +5,13 @@ import { authorizeRole } from "../../../auth/authRoles.js";
 
 const routerDeleteUser = express.Router();
 
-routerDeleteUser.put("/:cedula", authorizeRole([1,2]), async (req, res) => {
-  const cedula = req.params.cedula;
+routerDeleteUser.put("/:id", authorizeRole([1,2]), async (req, res) => {
+  const id = req.params.id;
   try {
     const db = await connectDB();
     await db.execute(
-      `UPDATE PRODUCTO SET Estado=false where Cedula = ?`,
-      [cedula]
+      `UPDATE PRODUCTO SET Estado=false where id = ?`,
+      [id]
     );
     res
       .status(201)

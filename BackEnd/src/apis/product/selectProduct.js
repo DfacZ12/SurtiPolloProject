@@ -10,19 +10,19 @@ routerSelectUser.get("/:id", authorizeRole([1]), async (req, res) => {
   try {
     const db = await connectDB();
     const [info] = await db.execute(`
-      SELECT Id,Nombre,Pre_Uni,Cant_Dispo,Tiempo_de_refrigeracion,iva_total,Registrado_Por,fecha_registro
+      SELECT Id,Nombre name,Pre_Uni price,Cant_Dispo quantity,Tiempo_de_refrigeracion refrigeration_time,iva_total iva,Registrado_Por registered_by,fecha_registro
       FROM PRODUCTO WHERE Id= ? AND estado = true`,[id]);
 
     if (info.length === 0) {
       return res
         .status(404)
         .json(
-          jsonResponse(404, { error: "No se encuentran la info del usuario" })
+          jsonResponse(404, { error: "No se encuentran la info del producto" })
         );
     }
     res.status(201).json(jsonResponse(201, info));
   } catch (error) {
-    console.log("Error al obtener usuarios:", error);
+    console.log("Error al obtener productos:", error);
     res
       .status(500)
       .json(jsonResponse(500, { message: "Error interno del servidor" }));

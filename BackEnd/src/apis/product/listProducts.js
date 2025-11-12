@@ -9,10 +9,10 @@ routerSelectUser.get("/", authorizeRole([1,2]), async (req, res) => {
   try {
     const db = await connectDB();
     const [info] = await db.execute(`
-      SELECT Id,Nombre,Pre_Uni,Cant_Dispo,Tiempo_de_refrigeracion,iva_total,Registrado_Por,fecha_registro
+      SELECT Id,Nombre name,Pre_Uni price,Cant_Dispo quantity,Tiempo_de_refrigeracion refrigeration_time,iva_total iva,Registrado_Por registered_by,fecha_registro
       FROM PRODUCTO
       WHERE estado = true
-      ORDER BY Nombre DESC
+      ORDER BY Id
     `);
 
     if (info.length === 0) {
