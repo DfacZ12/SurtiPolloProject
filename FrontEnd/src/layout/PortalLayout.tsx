@@ -122,11 +122,11 @@ const PortalLayout = () => {
                 : "w-0 invisible opacity-0"
             } lg:w-[270px] lg:visible lg:opacity-100 flex flex-col`}
           >
-            <div className="flex items-center justify-between pt-8 pb-2 px-6 sticky top-0 bg-white min-h-[80px] z-[100]">
+            <div className="flex items-center justify-between pt-8 px-6 sticky top-0 bg-white min-h-[80px] z-[100]">
               <img
-                src="https://readymadeui.com/readymadeui.svg"
+                src="/LogoSideBar.svg"
                 alt="logo"
-                className="w-[170px]"
+                className="w-full h-[115px] object-cover"
               />
               <button
                 onClick={toggleSidebar}
@@ -145,7 +145,7 @@ const PortalLayout = () => {
               </button>
             </div>
 
-            <div className="py-6 px-6 flex-1 overflow-y-auto">
+            <div className="pb-6 px-6 flex-1 overflow-y-auto">
               <Sidebar
                 onSelectMenu={(title, icon) => {
                   setGestTitle(title);
