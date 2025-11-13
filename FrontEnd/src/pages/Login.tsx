@@ -26,6 +26,10 @@ const Login = () => {
         const json = response.data as AuthResponse;
         if(json.body.accessToken && json.body.refreshToken){
           auth.saveUser(json);
+          if(json.body.infoUser.firstLogin){
+            goTo("/changePassword")
+            return
+          }
           goTo("/Home");
         }
       }
