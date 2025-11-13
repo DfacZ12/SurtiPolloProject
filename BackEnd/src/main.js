@@ -27,6 +27,16 @@ import createProductRouter from './apis/product/createProduct.js'
 import updateProductRouter from './apis/product/updateProduct.js'
 import deleteProductRouter from './apis/product/deleteProduct.js'
 
+import listClientsRouter from './apis/client/listClients.js'
+import selectClientRouter from './apis/client/selectClient.js'
+import createClientRouter from './apis/client/createClient.js'
+import updateClientRouter from './apis/client/updateClient.js'
+import deleteClientRouter from './apis/client/deleteClient.js'
+
+import createInvoiceRouter from './apis/invoice/createInvoice.js'
+import listInvoiceRouter from './apis/invoice/listInvoice.js'
+import selectInvoiceRouter from './apis/invoice/selectInvoice.js'
+
 const app = express();
 
 
@@ -47,18 +57,29 @@ app.use('/api/logOut',logOutRouter);
 
 //!usuarios
 app.use('/api/listUsers',authenticate, listUsersRouter)
-app.use('/api/SelectUser',authenticate,selectUserRouter)
-app.use('/api/createUser', authenticate,createUserRouter)
-app.use('/api/updateUser', authenticate,updateUserRouter)
-app.use('/api/deleteUser', authenticate,deleteUserRouter)
+app.use('/api/SelectUser',authenticate, selectUserRouter)
+app.use('/api/createUser', authenticate, createUserRouter)
+app.use('/api/updateUser', authenticate, updateUserRouter)
+app.use('/api/deleteUser', authenticate, deleteUserRouter)
 
 //!Productos
 app.use('/api/listProducts',authenticate, listProductsRouter)
-app.use('/api/SelectProduct',authenticate,selectProductRouter)
-app.use('/api/createProduct', authenticate,createProductRouter)
-app.use('/api/updateProduct', authenticate,updateProductRouter)
-app.use('/api/deleteProduct', authenticate,deleteProductRouter)
+app.use('/api/SelectProduct',authenticate, selectProductRouter)
+app.use('/api/createProduct', authenticate, createProductRouter)
+app.use('/api/updateProduct', authenticate, updateProductRouter)
+app.use('/api/deleteProduct', authenticate, deleteProductRouter)
 
+//!Clientes
+app.use('/api/listClients',authenticate, listClientsRouter)
+app.use('/api/SelectClient',authenticate, selectClientRouter)
+app.use('/api/createClient', authenticate, createClientRouter)
+app.use('/api/updateClient', authenticate, updateClientRouter)
+app.use('/api/deleteClient', authenticate, deleteClientRouter)
+
+//!Facturas
+app.use('/api/createInvoice', authenticate, createInvoiceRouter)
+app.use('/api/listInvoice',authenticate, listInvoiceRouter)
+app.use('/api/SelectInvoice',authenticate, selectInvoiceRouter)
 
 //! EPS
 app.use('/api/selectEps',authenticate,epsRouter)

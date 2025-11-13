@@ -3,30 +3,31 @@ import { jsonResponse } from "../../../lib/jsonResponse.js";
 import { connectDB } from "../../../DB/db.js";
 import { authorizeRole } from "../../../auth/authRoles.js";
 
-const routerSelectProduct = express.Router();
+const routerSelectClient = express.Router();
 
-routerSelectProduct.get("/:id", authorizeRole([1,2]), async (req, res) => {
-  const id = req.params.id;
+routerSelectClient.get("/:cedula", authorizeRole([1,3]), async (req, res) => {
+  const cedula = req.params.cedula;
   try {
     const db = await connectDB();
     const [info] = await db.execute(`
-      SELECT Id,Nombre name,Pre_Uni price,Cant_Dispo quantity,Tiempo_de_refrigeracion refrigeration_time,iva_total iva,Registrado_Por registered_by,fecha_registro
-      FROM PRODUCTO WHERE Id= ? AND estado = true`,[id]);
+      SELECT cedula,Nombre name,Apellido lname,Tel_Fijo,Celular,Direccion_Cliente Direccion,Correo,fecha_registro
+      FROM CLIENTE
+      WHERE cedula= ? AND estado = true`,[cedula]);
 
     if (info.length === 0) {
       return res
         .status(404)
         .json(
-          jsonResponse(404, { error: "No se encuentran la info del producto" })
+          jsonResponse(404, { error: "Cliente no se encuentra en el sistema." })
         );
     }
     res.status(201).json(jsonResponse(201, info));
   } catch (error) {
-    console.log("Error al obtener productos:", error);
+    console.log("Error al obtener clientes:", error);
     res
       .status(500)
       .json(jsonResponse(500, { message: "Error interno del servidor" }));
   }
 });
 
-export default routerSelectProduct;
+export default routerSelectClient;

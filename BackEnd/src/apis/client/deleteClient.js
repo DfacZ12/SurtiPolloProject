@@ -3,25 +3,25 @@ import { jsonResponse } from "../../../lib/jsonResponse.js";
 import { connectDB } from "../../../DB/db.js";
 import { authorizeRole } from "../../../auth/authRoles.js";
 
-const routerDeleteProduct = express.Router();
+const routerDeleteClient = express.Router();
 
-routerDeleteProduct.put("/:id", authorizeRole([1,2]), async (req, res) => {
-  const id = req.params.id;
+routerDeleteClient.put("/:cedula", authorizeRole([1,3]), async (req, res) => {
+  const cedula = req.params.cedula;
   try {
     const db = await connectDB();
     await db.execute(
-      `UPDATE PRODUCTO SET Estado=false where id = ?`,
-      [id]
+      `UPDATE CLIENTE SET Estado=false where cedula = ?`,
+      [cedula]
     );
     res
       .status(201)
-      .json(jsonResponse(201, { message: "Producto Eliminado correctamente." }));
+      .json(jsonResponse(201, { message: "Cliente Eliminado correctamente." }));
   } catch (error) {
-    console.error("Error al eliminar el producto:", error);
+    console.error("Error al eliminar el cliente:", error);
     res
       .status(500)
       .json(jsonResponse(500, { message: "Error interno del servidor." }));
   }
 });
 
-export default routerDeleteProduct;
+export default routerDeleteClient;

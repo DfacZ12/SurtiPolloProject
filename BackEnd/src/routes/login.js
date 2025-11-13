@@ -14,7 +14,7 @@ export default routerLogin.post('/', async (req, res,next) => {
         const db = await connectDB();
 
         const [user] = await db.execute(
-        `SELECT a.Cedula,a.username,a.password,a.Nombre,a.Apellido,b.NombreCargo Cargo,a.cargo CargoId
+        `SELECT a.Cedula,a.username,a.password,a.Nombre,a.Apellido,b.NombreCargo Cargo,a.cargo CargoId, firstLogin
           FROM USUARIO a join CARGO b ON a.Cargo=b.ID WHERE username = ? and estado = true`, [username]
         );
 

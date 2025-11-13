@@ -3,9 +3,9 @@ import { jsonResponse } from "../../../lib/jsonResponse.js";
 import { connectDB } from "../../../DB/db.js";
 import { authorizeRole } from "../../../auth/authRoles.js";
 
-const routerUpdateUser = express.Router();
+const routerUpdateProduct = express.Router();
 
-routerUpdateUser.put("/:id", authorizeRole([1,2]), async (req, res) => {
+routerUpdateProduct.put("/:id", authorizeRole([1,2]), async (req, res) => {
   const id = req.params.id;
   const {name,price,quantity,refrigeration_time,iva} = req.body
   try{
@@ -26,4 +26,4 @@ routerUpdateUser.put("/:id", authorizeRole([1,2]), async (req, res) => {
   }
 });
 
-export default routerUpdateUser;
+export default routerUpdateProduct;

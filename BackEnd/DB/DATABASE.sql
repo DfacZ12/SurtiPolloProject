@@ -66,6 +66,7 @@ CREATE TABLE CLIENTE (
   Correo VARCHAR(120),
   Registrado_por BIGINT NOT NULL,
   Estado BIT NOT NULL,
+  fecha_creacion date default (current_date()),
   CONSTRAINT fk_cliente_usuario FOREIGN KEY (Registrado_por) REFERENCES USUARIO(Cedula)
 );
 
@@ -84,6 +85,7 @@ CREATE TABLE PRODUCTO (
   fecha_registro date default (current_date()),
   CONSTRAINT fk_producto_usuario FOREIGN KEY (Registrado_Por) REFERENCES USUARIO(Cedula)
 );
+
 
 -- ==============================
 -- CREAR TABLA PEDIDO
@@ -121,9 +123,9 @@ CREATE TABLE FACTURA_VENTA (
   ID_F BIGINT AUTO_INCREMENT PRIMARY KEY,
   Entregado_a BIGINT NOT NULL,
   Fecha_Registro DATE NOT NULL,
-  Total FLOAT NOT NULL,
+  Total  DECIMAL(18,2) NOT NULL,
   Registrado_Por BIGINT NOT NULL,
-  iva_total FLOAT NOT NULL,
+  iva_total  DECIMAL(18,2) NOT NULL,
   CONSTRAINT fk_factura_cliente FOREIGN KEY (Entregado_a) REFERENCES CLIENTE(Cedula),
   CONSTRAINT fk_factura_usuario FOREIGN KEY (Registrado_Por) REFERENCES USUARIO(Cedula)
 );
@@ -137,6 +139,8 @@ CREATE TABLE DETALLE_FACT_VEN (
   IVA FLOAT NOT NULL,
   Prec_Venta_Prod FLOAT NOT NULL,
   Cant_Prod INT NOT NULL,
+  Subtotal DECIMAL(18,2) GENERATED ALWAYS AS (Prec_Venta_Prod * Cant_Prod) STORED,
+  Total_Linea DECIMAL(18,2) GENERATED ALWAYS AS ((Prec_Venta_Prod * Cant_Prod) + IVA) STORED,
   PRIMARY KEY (Prod_Vend, ID_Fact_Venta),
   CONSTRAINT fk_det_fact_prod FOREIGN KEY (Prod_Vend) REFERENCES PRODUCTO(ID),
   CONSTRAINT fk_det_fact_fact FOREIGN KEY (ID_Fact_Venta) REFERENCES FACTURA_VENTA(ID_F)
@@ -215,23 +219,43 @@ VALUES
 -- ==============================
 SELECT * FROM USUARIO;
 SELECT * FROM CARGO;
-SELECT * FROM PRODUCTO;
-SELECT * FROM EPS;
+SELECT * FROM factura_venta;
+SELECT * FROM DETALLE_FACT_VEN;
+SELECT * FROM CLIENTE;
 
-alter table PRODUCTO
+alter table CLIENTE
 add column fecha_registro date default (current_date());
 
-select cedula from usuario where username='danielfacunam';
+ALTER TABLE DETALLE_FACT_VEN
+  ADD COLUMN Subtotal DECIMAL(18,2) GENERATED ALWAYS AS (Prec_Venta_Prod * Cant_Prod) STORED,
+  ADD COLUMN Total_Linea DECIMAL(18,2) GENERATED ALWAYS AS ((Prec_Venta_Prod * Cant_Prod) + IVA) STORED;
 
-update USUARIO set estado = true where username='danielfacunam'
+ALTER TABLE FACTURA_VENTA
+  MODIFY Total DECIMAL(18,2),
+  MODIFY iva_total DECIMAL(18,2),
+  MODIFY Fecha_Registro DATETIME;
 
-SELECT aa.cedula, aa.Nombre, aa.Apellido, aa.Direccion,
-             b.EPS_Nombre AS EPS, aa.Tel_Fijo, aa.Celular, aa.Correo,
-             a.username AS Registrador_Por, aa.username,
-             c.NombreCargo AS cargo, aa.fecha_creacion
-      FROM USUARIO a
-      JOIN USUARIO aa ON a.cedula = aa.Registrado_Por
-      JOIN EPS b ON a.EPS = b.COD_EPS
-      JOIN CARGO c ON aa.cargo = c.id
-      WHERE aa.estado = true
-      ORDER BY Nombre DESC
+
+SELECT f.id_f, c.nombre AS cliente, f.fecha_registro, f.total, f.iva_total, f.registrado_por
+      FROM factura_venta f
+      JOIN cliente c ON f.Entregado_a = c.cedula
+      WHERE 1=1;
+      
+      SELECT
+        f.id_f,
+        c.nombre AS cliente,
+        c.cedula,
+        f.fecha_registro,
+        f.total,
+        f.iva_total,
+        u.username AS registrado_por
+      FROM factura_venta f
+      JOIN cliente c ON f.entregado_a = c.cedula
+      JOIN usuario u ON f.registrado_por = u.Cedula
+      
+      
+      
+      
+      
+      
+      

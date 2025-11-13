@@ -3,15 +3,16 @@ import { jsonResponse } from "../../../lib/jsonResponse.js";
 import { connectDB } from "../../../DB/db.js";
 import { authorizeRole } from "../../../auth/authRoles.js";
 
-const routerSelectUser = express.Router();
+const routerSelectProduct = express.Router();
 
-routerSelectUser.get("/", authorizeRole([1,2]), async (req, res) => {
+routerSelectProduct.get("/", authorizeRole([1,2]), async (req, res) => {
   try {
     const db = await connectDB();
     const [info] = await db.execute(`
-      SELECT Id,Nombre name,Pre_Uni price,Cant_Dispo quantity,Tiempo_de_refrigeracion refrigeration_time,iva_total iva,Registrado_Por registered_by,fecha_registro
+      SELECT Id,PRODUCTO.Nombre name,PRODUCTO.Pre_Uni price,PRODUCTO.Cant_Dispo quantity,PRODUCTO.Tiempo_de_refrigeracion refrigeration_time,PRODUCTO.iva_total iva,b.username registered_by,PRODUCTO.fecha_registro
       FROM PRODUCTO
-      WHERE estado = true
+      JOIN USUARIO b ON b.Cedula = PRODUCTO.Registrado_Por
+      WHERE PRODUCTO.estado = true
       ORDER BY Id
     `);
 
@@ -31,4 +32,4 @@ routerSelectUser.get("/", authorizeRole([1,2]), async (req, res) => {
   }
 });
 
-export default routerSelectUser;
+export default routerSelectProduct;
