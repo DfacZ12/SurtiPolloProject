@@ -20,7 +20,7 @@ routerCreateClient.post("/", authorizeRole([1,3]),async (req, res) => {
       return res.status(404).json(jsonResponse(404, { message: "Usuario no encontrado." }));
     }
     await db.execute(
-      `INSERT INTO CLIENTE (Cedula, Nombre, Apellido, Tel_Fijo, Celular, Direccion_Cliente, Correo, Registrado_Por, Estado,fecha_registro)
+      `INSERT INTO CLIENTE (Cedula, Nombre, Apellido, Tel_Fijo, Celular, Direccion_Cliente, Correo, Registrado_Por, Estado,fecha_creacion)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?,true,NOW())`,
       [cedula, name, lname, phone || null, number, direccion, email, ccUser[0].Cedula]
     );
