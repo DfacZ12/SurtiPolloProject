@@ -9,7 +9,7 @@ routerListClient.get("/", authorizeRole([1,3]), async (req, res) => {
   try {
     const db = await connectDB();
     const [info] = await db.execute(`
-      SELECT CLIENTE.cedula,CLIENTE.Nombre name,CLIENTE.Apellido lname,CLIENTE.Tel_Fijo,CLIENTE.Celular,CLIENTE.Direccion_Cliente Direccion ,CLIENTE.Correo,b.username Registered_by,CLIENTE.fecha_registro
+      SELECT CLIENTE.cedula,CLIENTE.Nombre name,CLIENTE.Apellido lname,CLIENTE.Tel_Fijo,CLIENTE.Celular,CLIENTE.Direccion_Cliente Direccion ,CLIENTE.Correo,b.username Registered_by,CLIENTE.fecha_creacion
       FROM CLIENTE
       JOIN USUARIO b ON b.Cedula = CLIENTE.Registrado_Por
       WHERE CLIENTE.estado = true
