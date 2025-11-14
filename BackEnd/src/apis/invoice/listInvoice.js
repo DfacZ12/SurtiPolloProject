@@ -34,7 +34,7 @@ routerListSalesInvoice.get("/:username", authorizeRole([1, 3]), async (req, res)
 
     return res.status(200).json(jsonResponse(200, rows));
   } catch (error) {
-    console.error("❌ Error en getInvoices:", error.message);
+    console.error("Error al obtener facturas:", error.message);
     return res.status(500).json(jsonResponse(500,{ message: "Error al obtener facturas"}));
   }
 });

@@ -9,7 +9,7 @@ export const errorHandler = (err, req, res, next) => {
     err.statusCode && err.statusCode < 500
       ? err.message
       : "Internal server error";
-    console.log(err);
+  console.error(err);
   res.status(statusCode).json({
     statusCode,
     body: { error: message },

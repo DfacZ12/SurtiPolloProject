@@ -50,8 +50,8 @@ routerListSalesInvoice.get("/:id", authorizeRole([1, 3]), async (req, res) => {
     }
     return res.status(200).json(jsonResponse(200, objectInvoice));
   } catch (error) {
-    console.error("❌ Error en getInvoices:", error.message);
-    return res.status(500).json(jsonResponse(500,{ message: "Error al obtener facturas"}));
+    console.error("Error al obtener factura:", error.message);
+    return res.status(500).json(jsonResponse(500,{ message: "Error al obtener factura"}));
   }
 });
 

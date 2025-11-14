@@ -31,7 +31,7 @@ routerCreateProduct.post("/", authorizeRole([1,2]),async (req, res) => {
       })
     );
   } catch (error) {
-    console.error("❌ Error al crear producto:", error);
+    console.error("Error al crear producto:", error);
     res.status(500).json(jsonResponse(500, { message: "Error interno del servidor." }));
   }
 });

@@ -69,6 +69,14 @@ const ListSalesInvoice = () => {
     return num.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
+  const formatFecha = (fecha: string): string => {
+    const fechaDate = new Date(fecha);
+    const nombreMes = fechaDate.getMonth()
+    const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+    return `${fechaDate.getDate()} de ${meses[nombreMes]} de ${fechaDate.getFullYear()}`;
+  };
+
+
   const getInfoInvoice = async (id: number) => {
     try {
       const response = await axios.get(`${API_URL}/selectInvoice/${id}`, {
@@ -178,7 +186,7 @@ const ListSalesInvoice = () => {
                   <td className="p-4">{f.cliente}</td>
                   <td className="p-4">{f.cedula}</td>
                   <td className="p-4">
-                    {new Date(f.fecha_registro).toLocaleDateString()}
+                    {formatFecha(f.fecha_registro)}
                   </td>
                   <td className="p-4 font-semibold">
                     ${numberMiles(Number(f.total).toFixed())}

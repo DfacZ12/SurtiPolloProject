@@ -82,7 +82,7 @@ app.use('/api/updateClient', authenticate, updateClientRouter)
 app.use('/api/deleteClient', authenticate, deleteClientRouter)
 
 //!Facturas
-app.use('/api/createInvoice', authenticate, createInvoiceRouter)
+app.use('/api/createInvoice', createInvoiceRouter)
 app.use('/api/listInvoice',authenticate, listInvoiceRouter)
 app.use('/api/selectInvoice',authenticate, selectInvoiceRouter)
 
