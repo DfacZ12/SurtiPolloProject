@@ -106,7 +106,9 @@ const CreateUsers = () => {
         const result = await Swal.fire({
           icon: "success",
           title: "Usuario creado correctamente",
-          html: `<p>Contraseña Temporal: ${response.data.body.tempPassword}</p>
+          html: `
+          <p class="text-slate-900"><b>Usuario </b>: ${formData.username}</p>
+          <p class="text-slate-900"><b>Contraseña Temporal </b>: ${response.data.body.tempPassword}</p>
           <p>${response.data.body.note}</p>
           `,
           showConfirmButton: true,
@@ -312,7 +314,9 @@ const CreateUsers = () => {
               name="username"
               type="text"
               value={formData.username}
-              onChange={handleChange}
+              onChange={(e)=>{
+                handleChange(e)
+              }}
               className={`${inputClass("username")} flex-1`}
               placeholder="usuario..."
               disabled

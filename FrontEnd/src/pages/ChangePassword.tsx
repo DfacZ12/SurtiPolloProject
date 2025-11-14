@@ -94,7 +94,9 @@ const ChangePassword = () => {
         <h2 className="text-xl font-semibold mb-4 text-center">
           Cambiar contraseña
         </h2>
-
+        <label htmlFor="oldPassword" className="block text-sm font-medium text-gray-700">
+          Contraseña actual
+        </label>
         <input
           type="password"
           placeholder="Contraseña actual"
@@ -102,6 +104,9 @@ const ChangePassword = () => {
           onChange={(e) => setOldPassword(e.target.value)}
           className="w-full mb-3 p-2 border rounded-md"
         />
+        <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700">
+          Nueva contraseña
+        </label>
         <input
           type="password"
           placeholder="Nueva contraseña"
