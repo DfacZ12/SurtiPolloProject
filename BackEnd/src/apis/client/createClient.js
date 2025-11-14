@@ -31,7 +31,7 @@ routerCreateClient.post("/", authorizeRole([1,3]),async (req, res) => {
       })
     );
   } catch (error) {
-    console.error("❌ Error al crear cliente:", error);
+    console.error("Error al crear cliente:", error);
     res.status(500).json(jsonResponse(500, { message: "Error interno del servidor." }));
   }
 });

@@ -34,7 +34,7 @@ export const getPool = async () => {
     }
     return pool;
   } catch (error) {
-    console.error("❌ Error creando el pool:", error);
+    console.error("Error creando el pool:", error);
     throw error;
   }
 };
@@ -45,7 +45,7 @@ export const createTransactionConnection = async () => {
     const conn = await poolConn.getConnection();
     return conn;
   } catch (error) {
-    console.error("❌ Error creando conexión de transacción:", error);
+    console.error("Error creando conexión de transacción:", error);
     throw error;
   }
 };

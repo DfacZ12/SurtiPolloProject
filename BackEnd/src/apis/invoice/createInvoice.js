@@ -5,7 +5,7 @@ import { createTransactionConnection } from "../../../DB/db.js";
 
 const routerCreateInvoice = express.Router();
 
-routerCreateInvoice.post("/", async (req, res) => {
+routerCreateInvoice.post("/", authorizeRole([1,3]),async (req, res) => {
   const { factura, detalles } = req.body;
   if (!factura || !detalles || detalles.length === 0) {
     return res
