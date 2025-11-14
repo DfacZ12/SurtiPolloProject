@@ -10,7 +10,7 @@ import { API_URL } from "../auth/Consts";
 import Sidebar from "./SideBar";
 import { flattenMenu } from "../util/FlatMenuItem";
 import Swal from "sweetalert2";
-import logo from "../assets/LogoFactura.png";
+import logo from "../assets/LogoSideBar.svg";
 
 const PortalLayout = () => {
   const location = useLocation();
