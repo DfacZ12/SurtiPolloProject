@@ -18,8 +18,8 @@ routerListSalesInvoice.get("/:id", authorizeRole([1, 3]), async (req, res) => {
         f.fecha_registro,
         f.total as total_factura,
         f.iva_total
-      FROM factura_venta f
-      JOIN cliente c ON f.entregado_a = c.cedula
+      FROM FACTURA_VENTA f
+      JOIN CLIENTE c ON f.entregado_a = c.cedula
       WHERE f.id_f = ?`,
       [id]
     );

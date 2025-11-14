@@ -24,7 +24,7 @@ routerCreateInvoice.post("/", authorizeRole([1,3]), async (req, res) => {
     }
 
     const [facturaResult] = await db.execute(
-      `INSERT INTO factura_venta (entregado_a, fecha_registro, total, registrado_por, iva_total)
+      `INSERT INTO FACTURA_VENTA (entregado_a, fecha_registro, total, registrado_por, iva_total)
        VALUES (?, NOW(), ?, ?, ?)`,
       [factura.cedula, factura.total_factura, ccUser[0].Cedula, factura.iva_total]
     );

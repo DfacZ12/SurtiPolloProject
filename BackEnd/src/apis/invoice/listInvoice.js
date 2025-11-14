@@ -24,9 +24,9 @@ routerListSalesInvoice.get("/:username", authorizeRole([1, 3]), async (req, res)
         f.total,
         f.iva_total,
         u.username AS registrado_por
-      FROM factura_venta f
-      JOIN cliente c ON f.entregado_a = c.cedula
-      JOIN usuario u ON f.registrado_por = u.Cedula
+      FROM FACTURA_VENTA f
+      JOIN CLIENTE c ON f.entregado_a = c.cedula
+      JOIN USUARIO u ON f.registrado_por = u.Cedula
       ${role[0].cargo != '1' ? `WHERE u.username = ? AND u.estado = true` : ''}
       ORDER BY f.fecha_registro DESC`,
       [username]

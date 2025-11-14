@@ -32,10 +32,9 @@ routerCreateUser.post("/", authorizeRole([1]),async (req, res) => {
       return res.status(409).json(jsonResponse(409, { message: "El usuario o cédula ya están registrados." }));
     }
 
-    const [ccUser] = await db.execute(`SELECT cedula FROM USUARIO WHERE username = ? `, [registered_by]);
+    const [ccUser] = await db.execute(`SELECT Cedula FROM USUARIO WHERE username = ? `, [registered_by]);
     if(ccUser.length ==0)return res.status(409).json(jsonResponse(409, { message: "Error al registar el usaurio." }));
 
-    console.log(ccUser)
     // Generar contraseña aleatoria y encriptarla
     const plainPassword = generateRandomPassword(10);
     const hashedPassword = await bcrypt.hash(plainPassword, 10);
@@ -43,7 +42,7 @@ routerCreateUser.post("/", authorizeRole([1]),async (req, res) => {
     await db.execute(
       `INSERT INTO USUARIO (Cedula, Nombre, Apellido, Direccion, Celular, Tel_Fijo,Correo, EPS, cargo, Registrado_Por,username, password, estado, firstLogin, fecha_creacion)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,NOW())`,
-      [cedula, name, lname, direccion, number, phone || null, email, eps, cargo, ccUser[0].cedula, username, hashedPassword, true, true]
+      [cedula, name, lname, direccion, number, phone || null, email, eps, cargo, ccUser[0].Cedula, username, hashedPassword, true, true]
     );
 
     // Retornar la contraseña generada (idealmente solo visible para admin o enviada por correo)

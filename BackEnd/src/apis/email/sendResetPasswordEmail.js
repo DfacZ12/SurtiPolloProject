@@ -34,8 +34,6 @@ export const sendResetPasswordEmail = async (email, resetLink) => {
         </div>
       `
     });
-
-    console.log("📧 Email enviado:", info.messageId);
     return true;
 
   } catch (error) {

@@ -26,8 +26,6 @@ routerForgotPassword.post("/", async (req, res) => {
     }
 
     const user = rows[0];
-    console.log(user);
-
     const token = jwt.sign(
       {
         Cedula: user.Cedula,

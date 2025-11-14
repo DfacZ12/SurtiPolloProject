@@ -54,7 +54,7 @@ router.post("/", async (req, res, next) => {
       })
     );
   } catch (err) {
-    console.log("Error in /refresh-token:", err);
+    console.log("Error in /refreshToken:", err);
     next(err);
   }
 });
