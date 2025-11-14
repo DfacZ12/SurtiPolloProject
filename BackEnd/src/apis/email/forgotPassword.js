@@ -35,7 +35,6 @@ routerForgotPassword.post("/", async (req, res) => {
       { expiresIn: "10m" }
     );
 
-    // aquí envías el email
     const resetLink = `${process.env.URLFRONTEND || 'http://localhost:5173'}/ResetPassword?token=${token}`;
     await sendResetPasswordEmail(email, resetLink);
 

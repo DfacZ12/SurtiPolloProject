@@ -1,19 +1,12 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
+
 
 export const sendResetPasswordEmail = async (email, resetLink) => {
   try {
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: process.env.SMTP_PORT,
-      secure: true,
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS
-      }
-    });
+    const resend = new Resend(process.env.RESEND_KEY);
 
-    const info = await transporter.sendMail({
-      from: `"Soporte - SurtiPollo" <${process.env.SMTP_USER}>`,
+    const info = await resend.emails.send({
+      from: "Soporte <onboarding@resend.dev>",
       to: email,
       subject: "Restablece tu contraseña",
       html: `
@@ -34,6 +27,8 @@ export const sendResetPasswordEmail = async (email, resetLink) => {
         </div>
       `
     });
+
+    console.log("📧 Email enviado:", info.messageId);
     return true;
 
   } catch (error) {
