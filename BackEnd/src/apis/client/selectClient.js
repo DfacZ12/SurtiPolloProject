@@ -10,7 +10,7 @@ routerSelectClient.get("/:cedula", authorizeRole([1,3]), async (req, res) => {
   try {
     const db = await connectDB();
     const [info] = await db.execute(`
-      SELECT cedula,Nombre name,Apellido lname,Tel_Fijo,Celular,Direccion_Cliente Direccion,Correo,fecha_registro
+      SELECT cedula,Nombre name,Apellido lname,Tel_Fijo,Celular,Direccion_Cliente Direccion,Correo,fecha_creacion
       FROM CLIENTE
       WHERE cedula= ? AND estado = true`,[cedula]);
 
