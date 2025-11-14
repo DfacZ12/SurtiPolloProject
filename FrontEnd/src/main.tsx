@@ -17,13 +17,26 @@ import ListUsers from "./pages/Users/ListUsers.tsx";
 import Unauthorized from "./pages/Unauthorized.tsx";
 import CreateProduct from "./pages/Products/CreateProduct.tsx";
 import ListProducts from "./pages/Products/ListProduct.tsx";
+import ListClients from "./pages/Clients/ListClients.tsx";
+import CreateClient from "./pages/Clients/CreateClient.tsx";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCog } from "@fortawesome/free-solid-svg-icons";
+import CreateSalesInvoice from "./pages/invoices/CreateSalesInvoice.tsx";
+import ListSalesInvoice from "./pages/invoices/ListSalesInvoice.tsx";
+import ChangePassword from "./pages/ChangePassword.tsx";
+import ForgotPassword from "./pages/ForgotPassword.tsx";
+import ResetPassword from "./pages/resetPassword.tsx";
 
 const RootRedirect = () => {
-  const { isAuth, isLoading } = useAuth();
+  const { isAuth, isLoading, firstLogin } = useAuth();
+
   if (isLoading) return <Loader message="Verificando sesión..." />;
-  // Si está autenticado, lo mandamos a Home
-  if (isAuth) return <Navigate to="/Home" replace />;
-  // Si no está autenticado, mostramos Login
+
+  if (isAuth) {
+    if (firstLogin) return <Navigate to="/changePassword" replace />;
+    return <Navigate to="/Home" replace />;
+  }
+
   return <Login />;
 };
 
@@ -37,9 +50,21 @@ const router = createBrowserRouter([
     element: <Unauthorized />,
   },
   {
+    path: "/forgotPassword",
+    element: <ForgotPassword />,
+  },
+  {
+    path: "/resetPassword",
+    element: <ResetPassword />,
+  },
+  {
     path: "/",
     element: <ProtectedRoute />,
     children: [
+      {
+        path: "/changePassword",
+        element: <ChangePassword />
+      },
       {
         element: <PortalLayout />,
         children: [
@@ -70,7 +95,9 @@ const router = createBrowserRouter([
             ],
           },
           {
-            element: <ProtectedRoute allowedRoles={["Administrador", "Almacenista"]} />,
+            element: (
+              <ProtectedRoute allowedRoles={["Administrador", "Almacenista"]} />
+            ),
             children: [
               {
                 path: "/Products",
@@ -85,43 +112,75 @@ const router = createBrowserRouter([
                   },
                   {
                     path: "List",
-                    element: <ListProducts/>
+                    element: <ListProducts />,
                   },
                 ],
               },
             ],
           },
           {
-            element: <ProtectedRoute allowedRoles={["Administrador", "Cajero"]} />,
+            element: (
+              <ProtectedRoute allowedRoles={["Administrador", "Cajero"]} />
+            ),
             children: [
-                {
-              path: "/Clients",
-              children: [
-                {
-                  index: true,
-                  element: <Navigate to="/Clients/List" replace />,
-                },
-                {
-                  path: "Create",
-                  element: (
-                    <div>🍗 Aquí iría tu página de creación de usuarios</div>
-                  ),
-                },
-                {
-                  path: "List",
-                  element: <div>🍗 Aquí iría tu página de lista de usuarios</div>,
-                },
-              ]
-              }
+              {
+                path: "/Clients",
+                children: [
+                  {
+                    index: true,
+                    element: <Navigate to="/Clients/List" replace />,
+                  },
+                  {
+                    path: "Create",
+                    element: <CreateClient />,
+                  },
+                  {
+                    path: "List",
+                    element: <ListClients />,
+                  },
+                ],
+              },
             ],
           },
           {
-            path: "/SalesInvoice",
-            element: "",
+            element: (
+              <ProtectedRoute allowedRoles={["Administrador", "Cajero"]} />
+            ),
+            children: [
+              {
+                path: "/SalesInvoice",
+                children: [
+                  {
+                    index: true,
+                    element: <Navigate to="/SalesInvoice/List" replace />,
+                  },
+                  {
+                    path: "Create",
+                    element: <CreateSalesInvoice />,
+                  },
+                  {
+                    path: "List",
+                    element: <ListSalesInvoice />,
+                  },
+                ],
+              },
+            ],
           },
           {
-            path: "/SupplierInvoice",
-            element: "",
+            element: (
+              <ProtectedRoute allowedRoles={["Administrador", "Almacenista"]} />
+            ),
+            children: [
+              {
+                path: "/SupplierInvoice",
+                element: (
+                  <p className="font-normal text-2xl text-red-600">
+                    Pendiente en Construcción
+                    <FontAwesomeIcon icon={faCog} />
+                  </p>
+                ),
+              },
+            ],
           },
         ],
       },
@@ -131,13 +190,13 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root") as HTMLElement).render(
   // <StrictMode>
-    <AuthProvider>
-      <Toaster
-        position="top-right"
-        reverseOrder={false}
-        toastOptions={{ duration: 5000 }}
-      />
-      <RouterProvider router={router} />
-    </AuthProvider>
+  <AuthProvider>
+    <Toaster
+      position="top-right"
+      reverseOrder={false}
+      toastOptions={{ duration: 5000 }}
+    />
+    <RouterProvider router={router} />
+  </AuthProvider>
   // </StrictMode>
 );

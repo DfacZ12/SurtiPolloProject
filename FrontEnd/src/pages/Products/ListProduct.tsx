@@ -10,7 +10,7 @@ import Swal from "sweetalert2";
 
 const ListProducts = () => {
   const auth = useAuth();
-  const [userList, setProductList] = useState<[]>([]);
+  const [ProductList, setProductList] = useState<[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<number | null>(null);
 
   useEffect(() => {
@@ -93,7 +93,7 @@ const ListProducts = () => {
         </thead>
 
         <tbody className="whitespace-nowrap">
-          {userList.length === 0 ? (
+          {ProductList.length === 0 ? (
             <tr>
               <td
                 colSpan={13}
@@ -103,39 +103,39 @@ const ListProducts = () => {
               </td>
             </tr>
           ) : (
-            userList.map((user: IProduct, index) => (
+            ProductList.map((product: IProduct, index) => (
               <tr
                 key={index}
                 className="even:bg-blue-50 bg-white border-b border-gray-200"
               >
                 <td className="p-4 text-center text-sm text-black">
-                  {user.Id}
+                  {product.Id}
                 </td>
                 <td className="p-4 text-center text-sm text-black">
-                  {user.name}
+                  {product.name}
                 </td>
                 <td className="p-4 text-center text-sm text-black">
-                  {user.price}
+                  {product.price}
                 </td>
                 <td className="p-4 text-center text-sm text-black">
-                  {user.quantity}
+                  {product.quantity}
                 </td>
                 <td className="p-4 text-center text-sm text-black">
-                  {user.refrigeration_time}
+                  {product.refrigeration_time}
                 </td>
                 <td className="p-4 text-center text-sm text-black">
-                  {user.iva}
+                  {product.iva}
+                </td>
+                <td className="p-4 text-center text-sm text-green-600">
+                  {product.registered_by}
                 </td>
                 <td className="p-4 text-center text-sm text-black">
-                  {user.registered_by}
-                </td>
-                <td className="p-4 text-sm text-black">
-                  {user.fecha_registro}
+                  {new Date(product.fecha_registro ?? "").toLocaleDateString()}
                 </td>
                 <td className="p-4 ">
                   <Tooltip content="Actualizar" side="top">
                     <button
-                      onClick={() => setSelectedProduct(user.Id)}
+                      onClick={() => setSelectedProduct(product.Id ?? 0)}
                       className="mr-4 cursor-pointer text-center "
                     >
                       <svg
@@ -158,7 +158,7 @@ const ListProducts = () => {
                   <Tooltip content="Eliminar Usuario" side="top">
                     <button
                       className="mr-4 cursor-pointer"
-                      onClick={() => confirmDeleteProduct(user.Id)}
+                      onClick={() => confirmDeleteProduct(product.Id ?? 0)}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -186,7 +186,7 @@ const ListProducts = () => {
       <Modal
         show={!!selectedProduct}
         onClose={() => setSelectedProduct(null)}
-        title="Actualizar usuario"
+        title="Actualizar Producto"
       >
         <UpdateProduct
           Id={selectedProduct}

@@ -7,6 +7,7 @@ import Tooltip from "../../shared/Tooltip";
 import UpdateUser from "./UpdateUser";
 import Modal from "../../shared/Modal";
 import Swal from "sweetalert2";
+import toast from "react-hot-toast";
 
 const ListUsers = () => {
   const auth = useAuth();
@@ -25,8 +26,8 @@ const ListUsers = () => {
       if (response.status === 200) {
         setUserList(response.data.body);
       }
-    } catch (e) {
-      console.error("error al Traer la info del usuario.", e);
+    } catch{
+      toast.error("Error al Traer la info del usuario.");
     }
   };
 

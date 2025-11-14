@@ -18,7 +18,8 @@ export interface User{
   name: string;
   lastname: string;
   role: string;
-  rolId: number
+  rolId: number;
+  firstLogin:boolean;
 }
 
 export interface AccesTokenResponse{

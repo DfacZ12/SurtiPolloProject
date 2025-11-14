@@ -1,17 +1,13 @@
-import { useEffect, useState } from "react";
-import { faUser, faWandMagicSparkles } from "@fortawesome/free-solid-svg-icons";
+import { useState } from "react";
+import { faUserTag } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Tooltip from "../../shared/Tooltip";
 import { useAuth } from "../../auth/AuthProvider";
 import axios from "axios";
 import { API_URL } from "../../auth/Consts";
-import type { Ieps } from "../../interfaces/IEps";
-import type { Irole } from "../../interfaces/IRole";
-import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
-const CreateUsers = () => {
+const CreateClient = () => {
   const auth = useAuth();
   const authUser = auth.getUser()?.username;
   const goTo = useNavigate();
@@ -23,30 +19,17 @@ const CreateUsers = () => {
     email: "",
     number: "",
     phone: "",
-    eps: "",
-    cargo: "",
-    username: "",
     registered_by: authUser
   });
-  const [epsData, setEpsData] = useState([])
-  const [rolData, setRolData  ] = useState([])
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const requiredFields = ["name", "lname", "cedula", "direccion" ,"number" ,"email", "eps", "cargo", "username"];
+  const requiredFields = ["name", "lname", "cedula", "direccion" ,"number" ,"email"];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: "" })); // limpiar error cuando el usuario escribe
-  };
-
-  const generateUsernameSuggestion = () => {
-    const base = `${formData.name.toLowerCase()}${formData.lname.toLowerCase().charAt(0)}`;
-    if(!base)return
-    const randomNum = Math.floor(Math.random() * 900 + 100); // número aleatorio entre 100–999
-    const username = `${base}${randomNum}`.replace(/ /g, "");
-    setFormData((prev) => ({ ...prev, username }));
   };
 
   const validateForm = () => {
@@ -71,44 +54,16 @@ const CreateUsers = () => {
       errors[name] ? "border-red-500 focus:border-red-500" : "border-gray-200 focus:border-blue-600"
     }`;
 
-  const getEps = async ()=>{
-    try {
-      const response = await axios.get(`${API_URL}/selectEps`, {
-        headers: { Authorization: `Bearer ${auth.getAccessToken()}` },
-      });
-      if (response.status === 200) {
-        setEpsData(response.data.body);
-      }
-    } catch{
-      toast.error("error al Traer la info de las EPS.");
-    }
-  }
-
-  const getRoles = async ()=>{
-    try {
-      const response = await axios.get(`${API_URL}/selectRoles`, {
-        headers: { Authorization: `Bearer ${auth.getAccessToken()}` },
-      });
-      if (response.status === 200) {
-        setRolData(response.data.body);
-      }
-    } catch{
-      toast.error("error al Traer la info de los cargos ");
-    }
-  }
 
   const sendCreateUserData = async ()=>{
     try {
-      const response = await axios.post(`${API_URL}/createUser`, formData,
+      const response = await axios.post(`${API_URL}/createClient`, formData,
         { headers: { Authorization: `Bearer ${auth.getAccessToken()}` } }
       );
       if (response.status === 201) {
         const result = await Swal.fire({
           icon: "success",
-          title: "Usuario creado correctamente",
-          html: `<p>Contraseña Temporal: ${response.data.body.tempPassword}</p>
-          <p>${response.data.body.note}</p>
-          `,
+          title: "Cliente creado correctamente",
           showConfirmButton: true,
           confirmButtonText: "Aceptar",
           confirmButtonColor: "#2563eb",
@@ -116,21 +71,17 @@ const CreateUsers = () => {
           allowEscapeKey: false,
         });
         if(result.isConfirmed){
-          goTo("/users");
+          goTo("/Clients");
         }
       }
     } catch (error) {
      if (axios.isAxiosError(error)) {
       console.error("Axios error:", error.response?.data.body.error || error.message);
-      Swal.fire(error.response?.data.body.error || error.message, "", "error");
+      Swal.fire(error.response?.data.body.message || error.message, "", "error");
      }
     }
   }
 
-  useEffect(()=>{
-    getEps();
-    getRoles();
-  },[])
   return (
     <form
       onSubmit={handleSubmit}
@@ -260,75 +211,6 @@ const CreateUsers = () => {
             placeholder="#######"
           />
         </div>
-
-        {/* EPS */}
-        <div>
-          <label htmlFor="slcEps" className="text-slate-900 text-sm font-medium mb-2 block">
-            EPS *
-          </label>
-          <select
-            id="slcEps"
-            name="eps"
-            value={formData.eps}
-            onChange={handleChange}
-            className={inputClass("eps")}
-          >
-            <option value="">Seleccione una opción...</option>
-          {epsData.map((eps: Ieps)=>(
-            <option key={eps.Id} value={eps.Id}>{eps.Nombre}</option>
-          ))}
-          </select>
-          {errors.eps && <p className="text-red-500 text-xs mt-1">{errors.eps}</p>}
-        </div>
-
-        {/* Cargo */}
-        <div>
-          <label htmlFor="slcCargo" className="text-slate-900 text-sm font-medium mb-2 block">
-            Cargo *
-          </label>
-          <select
-            id="slcCargo"
-            name="cargo"
-            value={formData.cargo}
-            onChange={handleChange}
-            className={inputClass("cargo")}
-          >
-            <option value="">Seleccione un cargo...</option>
-          {rolData.map((role: Irole)=>(
-            <option key={role.Id} value={role.Id}>{role.Nombre}</option>
-          ))}
-          </select>
-          {errors.cargo && <p className="text-red-500 text-xs mt-1">{errors.cargo}</p>}
-        </div>
-
-        {/* Username + sugerencia */}
-        <div className="relative">
-          <label htmlFor="inptUsername" className="text-slate-900 text-sm font-medium mb-2 block">
-            Nombre de usuario *
-          </label>
-          <div className="flex items-center">
-            <input
-              id="inptUsername"
-              name="username"
-              type="text"
-              value={formData.username}
-              onChange={handleChange}
-              className={`${inputClass("username")} flex-1`}
-              placeholder="usuario..."
-              disabled
-            />
-            <Tooltip content="Generar nombre de Usuario" side="top">
-            <button
-              type="button"
-              onClick={generateUsernameSuggestion}
-              className="ml-2 bg-indigo-500 hover:bg-indigo-600 text-white px-3 py-2 rounded-sm text-sm font-medium cursor-pointer"
-            >
-              <FontAwesomeIcon icon={faWandMagicSparkles} />
-            </button>
-            </Tooltip>
-          </div>
-          {errors.username && <p className="text-red-500 text-xs mt-1">{errors.username}</p>}
-        </div>
       </div>
 
       <div className="mt-8">
@@ -336,12 +218,12 @@ const CreateUsers = () => {
           type="submit"
           className="w-full py-2.5 px-5 text-sm font-medium tracking-wider rounded-sm cursor-pointer text-white bg-blue-600 hover:bg-blue-700 focus:outline-0"
         >
-          Crear Usuario
-          <FontAwesomeIcon className="ml-2" icon={faUser} />
+          Crear Cliente
+          <FontAwesomeIcon className="ml-2" icon={faUserTag} />
         </button>
       </div>
     </form>
   );
 };
 
-export default CreateUsers;
+export default CreateClient;

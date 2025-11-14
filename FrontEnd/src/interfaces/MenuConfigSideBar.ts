@@ -50,9 +50,11 @@ export const menuItems: iMenuItem[] = [
   {
     id: "facuturaVenta",
     label: "Factura Venta",
-    title: "Factura de Venta",
     icon: faCartShopping,
-    path: "/SalesInvoice",
+     submenus: [
+      { label: "Lista Facturas", title:"Lista de Facturas",path: "/SalesInvoice/List" },
+      { label: "Nueva Factura", title:"Nueva Factura",path: "/SalesInvoice/Create" },
+    ],
     roles: ["Administrador", "Cajero"],
   },
     {

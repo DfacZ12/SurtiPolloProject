@@ -52,7 +52,6 @@ const CreateProduct = () => {
     }`;
 
   const sendCreateProductData = async ()=>{
-    console.log("authUser",auth.getUser());
     try {
       const response = await axios.post(`${API_URL}/createProduct`, formData,
         { headers: { Authorization: `Bearer ${auth.getAccessToken()}` } }

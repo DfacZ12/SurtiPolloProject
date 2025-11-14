@@ -77,6 +77,13 @@ const PortalLayout = () => {
         auth.logOut();
       }
     } catch (e) {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Error al cerrar sesión",
+        timer: 1500,
+        showConfirmButton: false,
+      });
       console.error("error al cerrar sesión", e);
     }
   };

@@ -7,25 +7,27 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
-  const auth = useAuth()
-  const location = useLocation()
+  const auth = useAuth();
+  const location = useLocation();
   const user = auth.getUser();
-
 
   if (auth.isLoading) return <Loader message="Verificando sesión..." />;
 
-  // Si no está autenticado → redirige al login
+  if (auth.firstLogin && location.pathname === "/changePassword") {
+    return <Outlet />;
+  }
+
+  if (location.pathname === "/changePassword") {
+    return <Navigate to="/Home" replace />;
+  }
+
   if (!auth.isAuth) {
     return <Navigate to="/" state={{ from: location }} replace />;
   }
-
-  // Si hay roles permitidos y el del usuario no está incluido → no autorizado
   if (!user || (allowedRoles && !allowedRoles.includes(user.role))) {
     return <Navigate to="/unauthorized" replace />;
   }
 
-
-  // Si todo bien → renderiza hijos
   return <Outlet />;
 };
 

@@ -21,16 +21,19 @@ interface DecodedToken {
 
 const AuthContext = createContext({
   isAuth: false,
+  firstLogin: false,
   getAccessToken: () => {},
   saveUser: (userData: AuthResponse) => {},
   getRefreshToken: () => {},
   getUser: () => ({} as User | undefined),
   isLoading: true,
   logOut: () => {},
+  saveFirstLogin: (firstLogin: boolean, accessToken: string, user: User, refreshToken: string) => {},
 });
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isAuth, setIsAuth] = useState(false);
+  const [firstLogin, setFirstLogin] = useState(false);
   const [accessToken, setAccessToken] = useState<string>("");
   const [user, setUser] = useState<User>();
   const [isLoading, setIsLoading] = useState(true);
@@ -78,7 +81,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         }
         return null;
       } catch (error) {
-        console.error("Error renovando el token:", error);
         return null;
       } finally {
         isRefreshing = false;
@@ -102,6 +104,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       userData.body.accessToken,
       userData.body.refreshToken
     );
+  };
+
+  const saveFirstLogin = (firstLogin: boolean, accessToken: string, user: User, refreshToken: string) => {
+    setAccessToken(accessToken);
+    localStorage.setItem("tk", JSON.stringify(refreshToken));
+    setIsAuth(true);
+    setFirstLogin(firstLogin);
+    setUser(user);
   };
 
   const saveSessionInfo = (
@@ -216,6 +226,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setIsAuth(false);
     setUser(undefined);
     setIsLoading(false);
+    setFirstLogin(false);
   };
 
   const getUserInfo = async (accessToken: string) => {
@@ -241,6 +252,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setIsAuth(false);
     setAccessToken("");
     setUser(undefined);
+    setFirstLogin(false);
     localStorage.clear();
   };
 
@@ -248,12 +260,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     <AuthContext.Provider
       value={{
         isAuth,
+        firstLogin,
         getAccessToken,
         saveUser,
         getRefreshToken,
         getUser,
         isLoading,
         logOut,
+        saveFirstLogin,
       }}
     >
       {children}
