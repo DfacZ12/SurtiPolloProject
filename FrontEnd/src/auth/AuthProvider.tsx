@@ -23,12 +23,12 @@ const AuthContext = createContext({
   isAuth: false,
   firstLogin: false,
   getAccessToken: () => {},
-  saveUser: (userData: AuthResponse) => {},
+  saveUser: (_userData: AuthResponse) => {},
   getRefreshToken: () => {},
   getUser: () => ({} as User | undefined),
   isLoading: true,
   logOut: () => {},
-  saveFirstLogin: (firstLogin: boolean, accessToken: string, user: User, refreshToken: string) => {},
+  saveFirstLogin: (_firstLogin: boolean, _accessToken: string, _user: User, _refreshToken: string) => {},
 });
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
