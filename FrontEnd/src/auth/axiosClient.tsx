@@ -2,12 +2,12 @@ import axios from "axios";
 import { API_URL } from "./Consts";
 import { toast } from "react-hot-toast";
 
-const axiosClient = axios.create({
+const AxiosClient = axios.create({
   baseURL: API_URL,
   withCredentials: true,
 });
 
-axiosClient.interceptors.response.use(
+AxiosClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error.response?.status === 401) {
@@ -28,4 +28,4 @@ axiosClient.interceptors.response.use(
   }
 );
 
-export default axiosClient;
+export default AxiosClient;

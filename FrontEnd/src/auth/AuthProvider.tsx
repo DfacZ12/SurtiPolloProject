@@ -4,7 +4,7 @@ import type {
   AuthResponse,
   User,
 } from "../interfaces/types";
-import axiosClient from "./AxiosClient";
+import AxiosClient from "./AxiosClient";
 import { toast } from "react-hot-toast";
 import { API_URL } from "./Consts";
 import { jwtDecode } from "jwt-decode";
@@ -67,7 +67,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         const config = {
           headers: { Authorization: `Bearer ${refreshToken}` },
         };
-        const response = await axiosClient.post(
+        const response = await AxiosClient.post(
           `${API_URL}/refreshToken`,
           {},
           config
@@ -234,7 +234,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const config = {
         headers: { Authorization: `Bearer ${accessToken}` },
       };
-      const response = await axiosClient.get(
+      const response = await AxiosClient.get(
         `${API_URL}/userInfoToken`,
         config
       );
