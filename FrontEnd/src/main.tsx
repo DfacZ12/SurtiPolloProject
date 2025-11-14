@@ -25,7 +25,7 @@ import CreateSalesInvoice from "./pages/invoices/CreateSalesInvoice.tsx";
 import ListSalesInvoice from "./pages/invoices/ListSalesInvoice.tsx";
 import ChangePassword from "./pages/ChangePassword.tsx";
 import ForgotPassword from "./pages/ForgotPassword.tsx";
-import ResetPassword from "./pages/resetPassword.tsx";
+import ResetPassword from "./pages/ResetPassword.tsx";
 
 const RootRedirect = () => {
   const { isAuth, isLoading, firstLogin } = useAuth();

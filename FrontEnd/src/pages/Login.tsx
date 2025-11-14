@@ -42,6 +42,7 @@ const Login = () => {
         }
       }
     } catch (error) {
+      console.log(error)
       if (axios.isAxiosError(error)) {
         console.error(
           "Axios error:",
@@ -60,7 +61,7 @@ const Login = () => {
         <div className="max-w-md w-full border border-gray-300 p-8 rounded-xl bg-gray-200">
           <div className="text-center">
             <img
-              src="/LogoFactura.png"
+              src="../src/assets/LogoFactura.png"
               alt="Logo"
               className="inline-block w-[140px] h-[140px]"
             />

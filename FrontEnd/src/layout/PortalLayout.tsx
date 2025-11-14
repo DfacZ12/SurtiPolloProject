@@ -83,6 +83,8 @@ const PortalLayout = () => {
         text: "Error al cerrar sesión",
         timer: 1500,
         showConfirmButton: false,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
       });
       console.error("error al cerrar sesión", e);
     }
@@ -131,7 +133,7 @@ const PortalLayout = () => {
           >
             <div className="flex items-center justify-between pt-8 px-6 sticky top-0 bg-white min-h-[80px] z-[100]">
               <img
-                src="/LogoSideBar.svg"
+                src="../assets/LogoSideBar.svg"
                 alt="logo"
                 className="w-full h-[115px] object-cover"
               />

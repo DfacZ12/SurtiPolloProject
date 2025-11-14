@@ -1,6 +1,6 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import logo from "../../public/LogoFactura.png";
+import logo from "../assets/LogoFactura.png";
 
 export const generatePDF = (data: any) => {
   const doc = new jsPDF({
