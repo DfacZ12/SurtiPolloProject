@@ -4,7 +4,7 @@ import { API_URL } from "../auth/Consts";
 import type { AuthResponseError } from "../interfaces/types";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-
+import logo from "../assets/LogoFactura.png";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -59,7 +59,7 @@ const ForgotPassword = () => {
       <div className="max-w-md w-full border border-gray-300 p-8 rounded-xl bg-gray-200">
         <div className="text-center">
           <img
-            src="/LogoFactura.png"
+            src={logo}
             alt="Logo"
             className="inline-block w-[160px] h-[160px]"
           />

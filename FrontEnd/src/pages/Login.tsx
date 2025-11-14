@@ -6,6 +6,7 @@ import { API_URL } from "../auth/Consts";
 import type { AuthResponse, AuthResponseError } from "../interfaces/types";
 import Alert from "../shared/Alert";
 import axios from "axios";
+import logo from "../assets/LogoFactura.png";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -61,7 +62,7 @@ const Login = () => {
         <div className="max-w-md w-full border border-gray-300 p-8 rounded-xl bg-gray-200">
           <div className="text-center">
             <img
-              src="../src/assets/LogoFactura.png"
+              src={logo}
               alt="Logo"
               className="inline-block w-[140px] h-[140px]"
             />
