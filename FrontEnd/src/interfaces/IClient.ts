@@ -7,5 +7,5 @@ export interface IClient {
   Direccion: string,
   Correo: string,
   Registered_by: string,
-  fecha_registro: Date
+  fecha_creacion: string;
 }

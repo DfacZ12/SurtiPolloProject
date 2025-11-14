@@ -10,5 +10,5 @@ export interface IUser {
   Registrador_Por: string,
   username: string,
   cargo: string,
-  fecha_creacion: Date
+  fecha_creacion: string;
 }

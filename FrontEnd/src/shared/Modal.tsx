@@ -17,7 +17,6 @@ const Modal = ({ show, onClose, title, children }: ModalProps) => {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          onClick={onClose}
         >
           <motion.div
             className="bg-white rounded-2xl shadow-lg p-6 max-w-3xl w-full mx-4 relative"

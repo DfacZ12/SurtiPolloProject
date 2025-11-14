@@ -67,6 +67,12 @@ const ListUsers = () => {
       Swal.fire("Error al eliminar el usuario", "", "error");
     }
   };
+  const formatFecha = (fecha: string): string => {
+    const fechaDate = new Date(fecha);
+    const nombreMes = fechaDate.getMonth()
+    const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+    return `${fechaDate.getDate()} de ${meses[nombreMes]} de ${fechaDate.getFullYear()}`;
+  };
 
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -147,7 +153,7 @@ const ListUsers = () => {
                   {user.cargo}
                 </td>
                 <td className="p-4 text-center text-sm text-black">
-                  {new Date(user.fecha_creacion).toLocaleDateString()}
+                  {formatFecha(user.fecha_creacion)}
                 </td>
                 <td className="p-4">
                   <Tooltip content="Actualizar" side="top">
