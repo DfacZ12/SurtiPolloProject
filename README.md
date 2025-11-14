@@ -35,6 +35,8 @@ Proyecto Bases datos, para la avicola SurtiPollo, Con front con tecnologías com
 | `id`      | `string` | **Required**. Id of item to fetch |
 
 
+#### CreateUser
+
 ```http
   POST /api/createUser
 ```
@@ -44,6 +46,8 @@ Proyecto Bases datos, para la avicola SurtiPollo, Con front con tecnologías com
 | `api_key` | `string` | **Required**.  Your API key       |
 | `formData`| `JSON`   | **Required** |
 
+#### UpdateUser
+
 ```http
   POST /api/updateUser
 ```
@@ -52,6 +56,8 @@ Proyecto Bases datos, para la avicola SurtiPollo, Con front con tecnologías com
 | :-------- | :------- | :-------------------------------- |
 | `api_key` | `string` | **Required**.  Your API key       |
 | `formData`| `JSON`   | **Required** |
+
+#### DeleteUser
 
 ```http
   POST /api/deleteUser/${id}
