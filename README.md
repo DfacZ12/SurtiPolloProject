@@ -2,7 +2,7 @@
 
 Proyecto Bases datos, para la avicola SurtiPollo, Con front con tecnologías como Vite + react, tailwind css, y Back hecho con nodeJs Express y mongoDB.
 
-
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/DfacZ12/SurtiPolloProject)
 
 ## API Reference
 
