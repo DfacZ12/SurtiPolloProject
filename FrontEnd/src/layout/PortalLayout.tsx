@@ -10,6 +10,7 @@ import { API_URL } from "../auth/Consts";
 import Sidebar from "./SideBar";
 import { flattenMenu } from "../util/FlatMenuItem";
 import Swal from "sweetalert2";
+import logo from "../assets/LogoFactura.png";
 
 const PortalLayout = () => {
   const location = useLocation();
@@ -133,7 +134,7 @@ const PortalLayout = () => {
           >
             <div className="flex items-center justify-between pt-8 px-6 sticky top-0 bg-white min-h-[80px] z-[100]">
               <img
-                src="../assets/LogoSideBar.svg"
+                src={logo}
                 alt="logo"
                 className="w-full h-[115px] object-cover"
               />
