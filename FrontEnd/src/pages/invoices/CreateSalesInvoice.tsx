@@ -10,7 +10,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { API_URL } from "../../auth/Consts";
+import { API_URL } from "../../auth/Consts.ts";
 import { useAuth } from "../../auth/AuthProvider";
 import type { IClient } from "../../interfaces/IClient";
 import type { IProduct } from "../../interfaces/IProduct";
