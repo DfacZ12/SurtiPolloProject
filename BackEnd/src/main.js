@@ -55,8 +55,8 @@ app.use(express.json());
 
 app.use('/api/login', loginRouter);
 app.use('/api/refreshToken', refreshTokenRouter);
-app.use('/api/userInfoToken', authenticate, userRouter);
 app.use('/api/logOut',logOutRouter);
+app.use('/api/userInfoToken', authenticate, userRouter);
 app.use('/api/changePassword',authenticate,changePasswordRouter);
 
 

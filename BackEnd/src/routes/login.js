@@ -30,6 +30,7 @@ export default routerLogin.post('/', async (req, res,next) => {
         try{
             await db.execute('UPDATE USUARIO SET refresh_token = ? WHERE Cedula = ?', [refreshToken, infoUser.cc]);
         }catch(error){
+          console.log(error);
           return res.status(500).json(jsonResponse(500,{ error: 'Ha ocurrido un error inesperado, intente de nuevo más tarde.'}))//si hay un error al guardar el refresh token
         }
         return res.status(201).json(jsonResponse(201, {infoUser, accessToken, refreshToken }))//envia el token al cliente
