@@ -8,6 +8,7 @@ import userRouter from './routes/userInfoToken.js';
 import loginRouter from './routes/login.js';
 import logOutRouter from './routes/logOut.js';
 import refreshTokenRouter from './routes/refreshToken.js';
+import changePasswordRouter from './routes/changePassword.js';
 
 /**
  * APIS
@@ -37,6 +38,9 @@ import createInvoiceRouter from './apis/invoice/createInvoice.js'
 import listInvoiceRouter from './apis/invoice/listInvoice.js'
 import selectInvoiceRouter from './apis/invoice/selectInvoice.js'
 
+import forgotPasswordRouter from './apis/email/forgotPassword.js';
+import resetPasswordRouter from './apis/email/resetPassword.js';
+
 const app = express();
 
 
@@ -53,25 +57,26 @@ app.use('/api/login', loginRouter);
 app.use('/api/refreshToken', refreshTokenRouter);
 app.use('/api/userInfoToken', authenticate, userRouter);
 app.use('/api/logOut',logOutRouter);
+app.use('/api/changePassword',authenticate,changePasswordRouter);
 
 
 //!usuarios
 app.use('/api/listUsers',authenticate, listUsersRouter)
-app.use('/api/SelectUser',authenticate, selectUserRouter)
+app.use('/api/selectUser',authenticate, selectUserRouter)
 app.use('/api/createUser', authenticate, createUserRouter)
 app.use('/api/updateUser', authenticate, updateUserRouter)
 app.use('/api/deleteUser', authenticate, deleteUserRouter)
 
 //!Productos
 app.use('/api/listProducts',authenticate, listProductsRouter)
-app.use('/api/SelectProduct',authenticate, selectProductRouter)
+app.use('/api/selectProduct',authenticate, selectProductRouter)
 app.use('/api/createProduct', authenticate, createProductRouter)
 app.use('/api/updateProduct', authenticate, updateProductRouter)
 app.use('/api/deleteProduct', authenticate, deleteProductRouter)
 
 //!Clientes
 app.use('/api/listClients',authenticate, listClientsRouter)
-app.use('/api/SelectClient',authenticate, selectClientRouter)
+app.use('/api/selectClient',authenticate, selectClientRouter)
 app.use('/api/createClient', authenticate, createClientRouter)
 app.use('/api/updateClient', authenticate, updateClientRouter)
 app.use('/api/deleteClient', authenticate, deleteClientRouter)
@@ -79,7 +84,11 @@ app.use('/api/deleteClient', authenticate, deleteClientRouter)
 //!Facturas
 app.use('/api/createInvoice', authenticate, createInvoiceRouter)
 app.use('/api/listInvoice',authenticate, listInvoiceRouter)
-app.use('/api/SelectInvoice',authenticate, selectInvoiceRouter)
+app.use('/api/selectInvoice',authenticate, selectInvoiceRouter)
+
+//!Email
+app.use('/api/forgotPassword', forgotPasswordRouter);
+app.use('/api/resetPassword', resetPasswordRouter);
 
 //! EPS
 app.use('/api/selectEps',authenticate,epsRouter)
@@ -88,10 +97,6 @@ app.use('/api/selectEps',authenticate,epsRouter)
 app.use('/api/selectRoles',authenticate,RoleRouter)
 
 app.use(errorHandler);
-
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-})
 
 app.listen(port, () => {
     console.log(`Backend SurtiPollo UP in port:${port}`)

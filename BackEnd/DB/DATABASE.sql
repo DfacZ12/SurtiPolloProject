@@ -44,9 +44,9 @@ CREATE TABLE USUARIO (
   username VARCHAR(30) UNIQUE NOT NULL,
   password VARCHAR(150) NOT NULL,
   Cargo TINYINT NOT NULL,
-  Estado BIT NOT NULL,
+  Estado BOOLEAN NOT NULL,
   refresh_token varchar(700),
-  firstLogin bit,
+  firstLogin BOOLEAN,
   fecha_creacion date default (current_date()),
   CONSTRAINT fk_usuario_eps FOREIGN KEY (EPS) REFERENCES EPS(COD_EPS),
   CONSTRAINT fk_usuario_registra FOREIGN KEY (Registrado_Por) REFERENCES USUARIO(Cedula),
@@ -65,7 +65,7 @@ CREATE TABLE CLIENTE (
   Direccion_Cliente VARCHAR(120) NOT NULL,
   Correo VARCHAR(120),
   Registrado_por BIGINT NOT NULL,
-  Estado BIT NOT NULL,
+  Estado BOOLEAN NOT NULL,
   fecha_creacion date default (current_date()),
   CONSTRAINT fk_cliente_usuario FOREIGN KEY (Registrado_por) REFERENCES USUARIO(Cedula)
 );
@@ -81,7 +81,7 @@ CREATE TABLE PRODUCTO (
   Tiempo_de_refrigeracion TINYINT NOT NULL,
   iva_total FLOAT NOT NULL,
   Registrado_Por BIGINT NOT NULL,
-  Estado BIT NOT NULL,
+  Estado BOOLEAN NOT NULL,
   fecha_registro date default (current_date()),
   CONSTRAINT fk_producto_usuario FOREIGN KEY (Registrado_Por) REFERENCES USUARIO(Cedula)
 );
@@ -158,7 +158,7 @@ CREATE TABLE PROVEEDOR (
   Correo VARCHAR(120),
   Nombre_Contacto VARCHAR(120) NOT NULL,
   Registrado_por BIGINT NOT NULL,
-  Estado CHAR(1) NOT NULL,
+  Estado BOOLEAN NOT NULL,
   CONSTRAINT fk_proveedor_usuario FOREIGN KEY (Registrado_por) REFERENCES USUARIO(Cedula)
 );
 
@@ -222,6 +222,7 @@ SELECT * FROM CARGO;
 SELECT * FROM factura_venta;
 SELECT * FROM DETALLE_FACT_VEN;
 SELECT * FROM CLIENTE;
+	
 
 alter table CLIENTE
 add column fecha_registro date default (current_date());
@@ -251,11 +252,29 @@ SELECT f.id_f, c.nombre AS cliente, f.fecha_registro, f.total, f.iva_total, f.re
         u.username AS registrado_por
       FROM factura_venta f
       JOIN cliente c ON f.entregado_a = c.cedula
-      JOIN usuario u ON f.registrado_por = u.Cedula
+      JOIN usuario u ON f.registrado_por = u.Cedula;
       
+	SELECT
+        f.Prod_vend,
+        c.nombre AS nombre_producto,
+        f.Cant_Prod as cantidad,
+        f.prec_venta_prod as precio_unitario,
+        f.IVA
+      FROM DETALLE_FACT_VEN f
+      JOIN PRODUCTO c ON f.Prod_vend = c.ID
+      where ID_FACT_VENTA = 3
       
+   update CLIENTE set Estado=1 where cedula='46672594'
       
-      
-      
-      
-      
+DELIMITER $$
+
+CREATE TRIGGER after_insert_detalle_factura
+AFTER INSERT ON DETALLE_FACT_VEN
+FOR EACH ROW
+BEGIN
+    UPDATE producto
+    SET Cant_Dispo = Cant_Dispo - NEW.Cant_Prod
+    WHERE ID = NEW.Prod_vend;
+END$$
+
+DELIMITER ;

@@ -6,29 +6,52 @@ import { authorizeRole } from "../../../auth/authRoles.js";
 const routerListSalesInvoice = express.Router();
 
 routerListSalesInvoice.get("/:id", authorizeRole([1, 3]), async (req, res) => {
+  const { id } = req.params;
   try {
     const db = await connectDB();
     const [rows] = await db.execute(
-      ` SELECT
-        f.id_f id_factura,
-        c.nombre AS cliente,
+      `SELECT
+        f.id_f as facturaId,
+        c.nombre,
+        c.apellido,
         c.cedula,
         f.fecha_registro,
-        f.total,
-        f.iva_total,
-        u.username AS registrado_por
+        f.total as total_factura,
+        f.iva_total
       FROM factura_venta f
       JOIN cliente c ON f.entregado_a = c.cedula
-      JOIN usuario u ON f.registrado_por = u.Cedula
-      ORDER BY f.fecha_registro DESC`);
+      WHERE f.id_f = ?`,
+      [id]
+    );
 
-    return res.status(200).json(jsonResponse(200, rows));
+    if (rows.length === 0) {
+      return res
+        .status(404)
+        .json(jsonResponse(404, { message: "Factura no encontrada." }));
+    }
+
+    const [detalle] = await db.execute(
+      `	SELECT
+        f.Prod_vend,
+        c.nombre AS nombre_producto,
+        f.Cant_Prod as cantidad,
+        f.prec_venta_prod as precio_unitario,
+        f.iva
+      FROM DETALLE_FACT_VEN f
+      JOIN PRODUCTO c ON f.Prod_vend = c.ID
+      WHERE ID_FACT_VENTA = ?`,
+        [id]
+      )
+    await Promise.all(detalle);
+    const nameClient = `${rows[0].nombre} ${rows[0].apellido}`;
+    const objectInvoice= {
+      factura: {...rows[0], nombre:nameClient},
+      detalles: [...detalle]
+    }
+    return res.status(200).json(jsonResponse(200, objectInvoice));
   } catch (error) {
     console.error("❌ Error en getInvoices:", error.message);
-    return res.status(500).json({
-      message: "Error al obtener facturas",
-      error: error.message,
-    });
+    return res.status(500).json(jsonResponse(500,{ message: "Error al obtener facturas"}));
   }
 });
 

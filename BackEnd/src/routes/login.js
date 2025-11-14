@@ -14,14 +14,13 @@ export default routerLogin.post('/', async (req, res,next) => {
         const db = await connectDB();
 
         const [user] = await db.execute(
-        `SELECT a.Cedula,a.username,a.password,a.Nombre,a.Apellido,b.NombreCargo Cargo,a.cargo CargoId, firstLogin
+        `SELECT a.Cedula,a.username,a.password,a.Nombre,a.Apellido,b.NombreCargo Cargo,a.cargo CargoId, estado,firstLogin
           FROM USUARIO a join CARGO b ON a.Cargo=b.ID WHERE username = ? and estado = true`, [username]
         );
 
         if (user.length === 0)return res.status(401).json(jsonResponse(401, { error: 'Usuario o Contraseña Incorrectos.' }));
 
         const isMatch = await bcrypt.compare(password, user[0].password);
-
         if (!isMatch)return res.status(401).json(jsonResponse(401, { error: 'Usuario o Contraseña Incorrectos.' }));
 
         const infoUser = getInfoUser(user[0]);//extrae la info necesaria del usuario
