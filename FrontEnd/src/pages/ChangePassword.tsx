@@ -86,10 +86,10 @@ const ChangePassword = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
+    <div className="flex flex-col items-center justify-center min-h-screen">
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-6 rounded-2xl shadow-lg w-96"
+        className="p-6 rounded-2xl shadow-lg w-96 bg-gray-200"
       >
         <h2 className="text-xl font-semibold mb-4 text-center">
           Cambiar contraseña
@@ -134,9 +134,19 @@ const ChangePassword = () => {
 
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700"
+          className="w-full text-white p-2 rounded-md bg-[#f29c50] hover:bg-[#e06c06] focus:outline-none cursor-pointer"
         >
           Guardar cambios
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            logOutAction();
+            goTo("/");
+          }}
+          className="w-full text-white p-2 rounded-md bg-gray-600 hover:bg-gray-700 mt-4 cursor-pointer focus:outline-none"
+        >
+          Cancelar
         </button>
       </form>
     </div>

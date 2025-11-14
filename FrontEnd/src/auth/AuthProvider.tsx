@@ -44,6 +44,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   } | null> | null = null;
 
   useEffect(() => {
+    const firstLoginData = localStorage.getItem("firstLoginData");
+    if (firstLoginData) {
+    const parsed = JSON.parse(firstLoginData as string);
+    if (parsed.firstLogin) {
+      setFirstLogin(true);
+      setIsLoading(false);
+      return;
+    }
+  }
     checkAuth();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -109,6 +118,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const saveFirstLogin = (firstLogin: boolean, accessToken: string, user: User, refreshToken: string) => {
     setAccessToken(accessToken);
     localStorage.setItem("tk", JSON.stringify(refreshToken));
+    localStorage.setItem("firstLoginData", JSON.stringify({ firstLogin }));
     setIsAuth(true);
     setFirstLogin(firstLogin);
     setUser(user);
@@ -185,6 +195,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const checkAuth = async () => {
+    console.log(firstLogin)
     try {
       const oldRefreshToken = getRefreshToken();
       if (!oldRefreshToken) {
@@ -221,6 +232,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const tokenExpiredAction = (toastMsg: string): void => {
+    console.log(firstLogin)
     toast.error(toastMsg);
     localStorage.clear();
     setIsAuth(false);

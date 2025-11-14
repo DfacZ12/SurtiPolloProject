@@ -11,6 +11,7 @@ import logo from "../assets/LogoFactura.png";
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [errorResponse, setErrorResponse] = useState("");
   const auth = useAuth();
   const goTo = useNavigate();
@@ -43,7 +44,7 @@ const Login = () => {
         }
       }
     } catch (error) {
-      console.log(error)
+      console.error(error);
       if (axios.isAxiosError(error)) {
         console.error(
           "Axios error:",
@@ -98,7 +99,7 @@ const Login = () => {
             <div className="relative flex items-center">
               <input
                 name="password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 className="w-full text-sm text-slate-900 bg-white border-2 border-transparent focus:border-[#1E2772] pl-4 pr-8 py-3 rounded-md outline-none"
                 placeholder="Ingresar Contraseña"
                 onChange={(e) => setPassword(e.target.value)}
@@ -109,11 +110,23 @@ const Login = () => {
                 stroke="#bbb"
                 className="w-[18px] h-[18px] absolute right-4 cursor-pointer"
                 viewBox="0 0 128 128"
+                onClick={() => setShowPassword(!showPassword)}
               >
-                <path
-                  d="M64 104C22.127 104 1.367 67.496.504 65.943a4 4 0 0 1 0-3.887C1.367 60.504 22.127 24 64 24s62.633 36.504 63.496 38.057a4 4 0 0 1 0 3.887C126.633 67.496 105.873 104 64 104zM8.707 63.994C13.465 71.205 32.146 96 64 96c31.955 0 50.553-24.775 55.293-31.994C114.535 56.795 95.854 32 64 32 32.045 32 13.447 56.775 8.707 63.994zM64 88c-13.234 0-24-10.766-24-24s10.766-24 24-24 24 10.766 24 24-10.766 24-24 24zm0-40c-8.822 0-16 7.178-16 16s7.178 16 16 16 16-7.178 16-16-7.178-16-16-16z"
-                  data-original="#000000"
-                ></path>
+                {showPassword ? (
+              // Ojo abierto
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#bbb" className="w-5 h-5">
+
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+            ) : (
+              // Ojo cerrado con diagonal
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#bbb" className="w-5 h-5">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3l18 18" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+            )}
               </svg>
             </div>
             <div className="flex flex-wrap items-center justify-between gap-4 !mt-4">
