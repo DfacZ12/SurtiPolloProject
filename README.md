@@ -1,34 +1,8 @@
 # SurtiPollo Project
 
-Proyecto Bases datos, para la avicola SurtiPollo, Con front con tecnologías como Vite + react, tailwind css, y Back hecho con nodeJs Express y mongoDB.
+Proyecto Bases datos, para la avicola SurtiPollo, Con front con tecnologías como Vite + react, tailwind css, y Back hecho con nodeJs Express y MySQL.
 
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/DfacZ12/SurtiPolloProject)
-
-## API Reference
-
-#### Get all items
-
-```http
-  GET /api/items
-```
-
-| Parameter | Type     | Description                |
-| :-------- | :------- | :------------------------- |
-| `api_key` | `string` | **Required**. Your API key |
-
-#### Get item
-
-```http
-  GET /api/items/${id}
-```
-
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-| `id`      | `string` | **Required**. Id of item to fetch |
-
-#### add(num1, num2)
-
-Takes two numbers and returns the sum.
 
 
 ## Authors
@@ -36,3 +10,55 @@ Takes two numbers and returns the sum.
 - Daniel Felipe Acuña
 - Julian Estaban Cespedez
 - Sharon Dayan Díaz
+
+## API Reference
+
+#### ListUsers
+
+```http
+  GET /api/listUsers
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `api_key` | `string` | **Required**. Your API key |
+
+#### SelectUser
+
+```http
+  GET /api/selectUser/${id}
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `api_key` | `string` | **Required**. Your API key |
+| `id`      | `string` | **Required**. Id of item to fetch |
+
+
+```http
+  POST /api/createUser
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `api_key` | `string` | **Required**.  Your API key       |
+| `formData`| `JSON`   | **Required** |
+
+```http
+  POST /api/updateUser
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `api_key` | `string` | **Required**.  Your API key       |
+| `formData`| `JSON`   | **Required** |
+
+```http
+  POST /api/deleteUser/${id}
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `api_key` | `string` | **Required**.  Your API key       |
+| `id`      | `string` | **Required**. Id of item to fetch |
+
