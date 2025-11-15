@@ -5,7 +5,7 @@ import { authorizeRole } from "../../../auth/authRoles.js";
 
 const routerSelectProduct = express.Router();
 
-routerSelectProduct.get("/", authorizeRole([1,2]), async (req, res) => {
+routerSelectProduct.get("/", authorizeRole([1, 2, 3]), async (req, res) => {
   try {
     const db = await connectDB();
     const [info] = await db.execute(`
