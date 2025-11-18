@@ -78,3 +78,95 @@ input[type=number] {
   font-size: 1.25rem;
   border-radius: 0.5rem;
 }
+
+.not-found-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh; /* Para que ocupe toda la altura de la ventana */
+  color: #343a40; /* Color de texto principal */
+  font-family: 'Arial', sans-serif;
+  text-align: center;
+  padding: 20px;
+}
+
+.not-found-title {
+  font-size: 8em; /* Tamaño grande para el 404 */
+  font-weight: bold;
+  color: #f29c50; /* Color primario de tu app */
+  margin-bottom: 10px;
+  animation: bounce 2s infinite; /* Animación sutil */
+}
+
+.not-found-message {
+  font-size: 2em;
+  margin-bottom: 15px;
+  color: #6c757d; /* Color de texto secundario */
+}
+
+.not-found-description {
+  font-size: 1.2em;
+  margin-bottom: 30px;
+  max-width: 600px;
+  line-height: 1.5;
+}
+
+.not-found-button {
+  display: inline-block;
+  background-color: #f29c50; /* Color primario de tu app */
+  color: white;
+  padding: 12px 25px;
+  border-radius: 50px; /* Botón redondeado */
+  text-decoration: none;
+  font-size: 1.1em;
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+}
+
+.not-found-button:hover {
+  background-color: #e06c06; /* Tono más oscuro al pasar el ratón */
+  transform: translateY(-2px); /* Pequeño efecto de elevación */
+}
+
+.not-found-illustration {
+  margin-top: 40px;
+}
+
+.not-found-illustration img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Animación para el título 404 */
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-15px);
+  }
+  60% {
+    transform: translateY(-7px);
+  }
+}
+
+/* Responsividad básica */
+@media (max-width: 768px) {
+  .not-found-title {
+    font-size: 6em;
+  }
+  .not-found-message {
+    font-size: 1.5em;
+  }
+  .not-found-description {
+    font-size: 1em;
+  }
+  .not-found-button {
+    padding: 10px 20px;
+    font-size: 1em;
+  }
+}
