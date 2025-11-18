@@ -1,6 +1,6 @@
 import express from "express";
 import jwt from "jsonwebtoken";
-import { connectDB } from "../../../DB/db.js";
+import { createTransactionConnection } from "../../../DB/db.js";
 import { jsonResponse } from "../../../lib/jsonResponse.js";
 import { sendResetPasswordEmail } from "./sendResetPasswordEmail.js";
 
@@ -9,7 +9,7 @@ const routerForgotPassword = express.Router();
 routerForgotPassword.post("/", async (req, res) => {
   const { email } = req.body;
   try {
-    const db = await connectDB();
+    const db = await createTransactionConnection();
 
     const [rows] = await db.execute(
       "SELECT Cedula FROM USUARIO WHERE Correo = ?",
