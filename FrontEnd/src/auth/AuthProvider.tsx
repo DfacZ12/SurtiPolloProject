@@ -195,7 +195,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const checkAuth = async () => {
-    console.log(firstLogin)
     try {
       const oldRefreshToken = getRefreshToken();
       if (!oldRefreshToken) {
@@ -232,7 +231,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const tokenExpiredAction = (toastMsg: string): void => {
-    console.log(firstLogin)
     toast.error(toastMsg);
     localStorage.clear();
     setIsAuth(false);

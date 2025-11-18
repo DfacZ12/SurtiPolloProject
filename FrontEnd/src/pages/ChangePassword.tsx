@@ -26,7 +26,6 @@ const ChangePassword = () => {
 
   const handleSubmit = async (e: React.FormEvent,) => {
     e.preventDefault();
-    console.log(validatePassword(newPassword, oldPassword))
     if (!validatePassword(newPassword, oldPassword))return;
     try {
       const response = await axios.post(
